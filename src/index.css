@@ -1,0 +1,53 @@
+ @import url('https://fonts.googleapis.com/css2?family=Lobster&family=Outfit:wght@100..900&family=Poppins:wght@500;600&family=Prata&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+ /* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+  }
+
+  *{
+    font-family: Outfit;
+  }
+  
+  .prata-regular {
+    font-family: "Prata", serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  .lobster-regular {
+    font-family: "Lobster", serif;
+    font-weight: 700;
+    font-style:normal;
+  }
+
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 1s ease-in-out forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 1s ease-in-out forwards;
+  }
+  
+  .delay-200 {
+    animation-delay: 0.2s;
+  }
