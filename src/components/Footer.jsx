@@ -4,7 +4,7 @@ import { assets } from '../assets/assets';
 
 const Footer = () => {
   return (
-    <div className="bg-[#333333] text-white py-10 mt-20 border-t border-[#F0F0F0]/20">
+    <div className="bg-[#333333] text-white py-10 mt-10 border-t border-[#F0F0F0]/20">
       {/* Footer Content */}
       <div className="container mx-auto px-4 sm:px-6 md:grid grid-cols-[2fr_1fr_1fr] gap-8">
         

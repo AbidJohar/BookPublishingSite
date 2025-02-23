@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { assets } from "../assets/assets";
 import { NavLink, Link } from "react-router-dom";
-import { useEffect } from "react";
+
 
 const Navbar = () => {
   const [activeLink, setActiveLink] = useState("");
@@ -13,7 +13,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex items-center shadow-sm justify-between py-5 font-medium bg-teal-600 px-7 ">
+    <div className=" flex items-center shadow-sm justify-between py-5 font-medium bg-teal-600 px-7 ">
       {/* Navbar logo */}
       <NavLink to="/">
   <h1 
@@ -52,22 +52,21 @@ const Navbar = () => {
         /> */}
 
         {/* Dropdown menu for profile */}
-        <div className="group relative">
-          <Link to={"/userlogin"}>
+        <div className="group relative ">
             <img
               className="w-5 cursor-pointer"
               src={assets.profile_icon}
               alt="Profile Icon"
             />
-          </Link>
+           
 
-          <div className="group-hover:block hidden z-50 absolute right-0 mt-0 bg-[#008080] text-white rounded-lg shadow-lg overflow-hidden w-48">
+          <div className="group-hover:block hidden z-50 absolute right-1 top-4 mt-0 bg-[#008080] text-white rounded-lg shadow-lg overflow-hidden w-48">
             <div className="flex flex-col px-4 py-3">
-              <p className="py-1 px-4 hover:bg-[#FFD700] hover:text-[#333333] rounded-md cursor-pointer transition duration-200 ease-in-out">
+              <NavLink to="/profile" className="py-1 px-4 hover:bg-[#FFD700] hover:text-[#333333] rounded-md cursor-pointer transition duration-200 ease-in-out">
                 My Profile
-              </p>
+              </NavLink>
               <p className="py-1 px-4 hover:bg-[#FFD700] hover:text-[#333333] rounded-md cursor-pointer transition duration-200 ease-in-out">
-                Orders
+                My wishlist
               </p>
               <p className="py-1 px-4 hover:bg-[#FFD700] hover:text-[#333333] rounded-md cursor-pointer transition duration-200 ease-in-out">
                 Logout

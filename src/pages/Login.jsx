@@ -6,7 +6,19 @@ const Login = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // New state for confirm password
   const [username, setUsername] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isSignup && password !== confirmPassword) {
+       setPasswordError("passwords do not match!")
+      return;
+    }
+    // Add your login/signup logic here
+    console.log({ email, password, ...(isSignup && { username, confirmPassword }) });
+  };
 
   return (
     <div className="flex items-start mt-7 justify-center min-h-screen bg-white">
@@ -14,11 +26,11 @@ const Login = () => {
         <h2 className="prata-regular text-2xl font-semibold text-center mb-6 text-[#333333]">
           {isSignup ? "Sign Up" : "Login"}
         </h2>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {isSignup && (
             <input
               type="text"
-              placeholder="Username"
+              placeholder="Full Name"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full p-3 border border-[#008080] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#008080] text-[#333333] placeholder-[#333333]/50"
@@ -38,6 +50,18 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-3 border border-[#008080] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#008080] text-[#333333] placeholder-[#333333]/50"
           />
+          {isSignup && (
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full p-3 border border-[#008080] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#008080] text-[#333333] placeholder-[#333333]/50"
+            />
+          )}
+          {passwordError && (<p className="text-red-500">
+            {passwordError}
+          </p>)}
           <button
             type="submit"
             className="w-full p-3 bg-teal-600 text-white rounded-sm hover:bg-teal-800 font-semibold"

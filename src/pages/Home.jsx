@@ -4,6 +4,7 @@ import TopRatedBooks from "../components/TopRated";
 import HeroSection from "../components/HeroSection";
 import MostReadBooks from "../components/MostReadBooks";
 import RecentlyUploadedBooks from "../components/RecentlyUploadedBooks";
+import HorrorSection from "../components/HorrorSection";
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
       <RecentlyUploadedBooks />
       <TopRatedBooks />
       <MostReadBooks />
+      <HorrorSection />
     </div>
   );
 };

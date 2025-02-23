@@ -8,6 +8,9 @@ import Navbar from "./components/Header";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Footer from './components/Footer'
+import Profile from "./pages/Profile";
+import WritingDashboard from "./pages/WritingDashboard";
+import PublishingPage from "./pages/PublishingPage";
 
 export default function App() {
   return (
@@ -19,9 +22,12 @@ export default function App() {
           <Route path="/book-details/:title" element={<BookDetails />} />
           <Route path="/category" element={<Category />} />
           <Route path="/becomeawriter" element={<WritePage />} />
-          <Route path="/userlogin" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/writing-dashboard" element={<WritingDashboard />} />
+          <Route path="/publishing-page" element={<PublishingPage />} />
         </Routes>
         <Footer/>
       </div>
