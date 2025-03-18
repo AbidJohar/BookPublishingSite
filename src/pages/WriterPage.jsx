@@ -13,7 +13,7 @@ const WriterPage = () => {
     <div className="w-full py-5 px-14 bg-white">
       <div className="w-full mb-10 flex flex-col items-center justify-center text-white h-40 bg-gradient-to-r from-black/80 to-gray-800/80 shadow-lg">
         <p className="mb-4 text-xl font-semibold tracking-wide">Compose Your Haroof Manuscript</p>
-        <Link to={"/writing-dashboard"}  className="px-5 py-3 rounded-sm bg-red-600 hover:bg-red-700 transition-colors text-white font-medium">
+        <Link to={"/publishing-page"}  className="px-5 py-3 rounded-sm bg-red-600 hover:bg-red-700 transition-colors text-white font-medium">
           Create New Content
         </Link>
       </div>

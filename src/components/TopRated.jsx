@@ -10,7 +10,13 @@ const TopRatedBooks = () => {
   const [topRatedBooks, setTopRatedBooks] = useState([]);
 
   useEffect(() => {
-    const sortedBooks = [...books].sort((a, b) => (b.ratings || 0) - (a.ratings || 0));
+    const sortedBooks = [...books]
+     .sort((a, b) => {(b.ratings.rating || 0) - (a.ratings.rating || 0)
+      console.log("rating:",a.ratings.userId);
+      
+    } );
+       console.log("Sorted books:", sortedBooks);
+       
     setTopRatedBooks(sortedBooks.slice(0, 8));
   }, []);
 

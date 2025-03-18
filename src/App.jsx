@@ -11,6 +11,8 @@ import Footer from './components/Footer'
 import Profile from "./pages/Profile";
 import WritingDashboard from "./pages/WritingDashboard";
 import PublishingPage from "./pages/PublishingPage";
+import SearchResults from "./pages/SearchResults";
+import MyReadings from "./pages/MyReadings";
 
 export default function App() {
   return (
@@ -28,6 +30,8 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/writing-dashboard" element={<WritingDashboard />} />
           <Route path="/publishing-page" element={<PublishingPage />} />
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/myreadings" element={<MyReadings />} />
         </Routes>
         <Footer/>
       </div>

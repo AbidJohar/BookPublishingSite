@@ -17,7 +17,7 @@ const Navbar = () => {
       {/* Navbar logo */}
       <NavLink to="/">
   <h1 
-    className="lobster-regular tracking-widest text-4xl sm:text-4xl text-black hover:text-[#FFD700] [text-shadow:_0_2px_0px_rgba(255,215,0,1)] hover:[text-shadow:_0_1px_1px_rgba(255,215,0,1)] transition-all duration-300 ease-in-out"
+    className="pacifico-regular text-4xl sm:text-4xl text-black hover:text-[#FFD700]  hover:[text-shadow:_0_1px_1px_rgba(255,215,0,1)] transition-all duration-300 ease-in-out"
   >
     Haroof
   </h1>
@@ -52,7 +52,7 @@ const Navbar = () => {
         /> */}
 
         {/* Dropdown menu for profile */}
-        <div className="group relative ">
+        <Link to={'/profile'}>
             <img
               className="w-5 cursor-pointer"
               src={assets.profile_icon}
@@ -60,7 +60,7 @@ const Navbar = () => {
             />
            
 
-          <div className="group-hover:block hidden z-50 absolute right-1 top-4 mt-0 bg-[#008080] text-white rounded-lg shadow-lg overflow-hidden w-48">
+          {/* <div className="group-hover:block hidden z-50 absolute right-1 top-4 mt-0 bg-[#008080] text-white rounded-lg shadow-lg overflow-hidden w-48">
             <div className="flex flex-col px-4 py-3">
               <NavLink to="/profile" className="py-1 px-4 hover:bg-[#FFD700] hover:text-[#333333] rounded-md cursor-pointer transition duration-200 ease-in-out">
                 My Profile
@@ -72,11 +72,11 @@ const Navbar = () => {
                 Logout
               </p>
             </div>
-          </div>
-        </div>
+          </div> */}
+        </Link>
 
         {/* Cart with item count */}
-        <Link to="/cart" className="relative">
+        <Link to="/myreadings" className="relative">
           <img className="w-5" src={assets.cart_icon} alt="cart-icon" />
           <p className="absolute flex items-center text-sm justify-center right-[-13px] top-0 rounded-full w-5 h-4 bg-[#FFD700] text-black text-center">
             0
@@ -110,10 +110,10 @@ const Navbar = () => {
 
         {/* Sidebar links */}
         <div className="flex flex-col  items-center gap-4 text-lg">
-          {["Home", "Collection", "About", "Contact"].map((link) => (
+          {["Home", "BecomeaWriter", "About","Category", "Contact"].map((link) => (
             <NavLink
               key={link}
-              to={`/${link.toLowerCase()}`}
+              to={ "Home" === link ? '/' : `/${link.toLowerCase()}`}
               className="py-2 px-4 w-full text-center hover:bg-[#FFD700] hover:text-[#333333] rounded-md"
               onClick={() => {
                 handleClick(link);

@@ -6,9 +6,9 @@ export default function BookCard({ book }) {
     <Link 
       to={`/book-details/${book.title}`} 
       state={{ book }} 
-      className="h-fit w-48 flex-shrink-0 flex flex-col justify-between" 
+      className="h-fit w-[10rem] flex-shrink-0 flex flex-col justify-between" 
     >
-      <div className="h-[18rem] w-full rounded-md overflow-hidden">  
+      <div className="h-[15rem] w-full rounded-md overflow-hidden">  
         <img
           src={book.coverImage}
           alt={book.title}

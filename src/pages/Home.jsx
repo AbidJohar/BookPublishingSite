@@ -8,7 +8,7 @@ import HorrorSection from "../components/HorrorSection";
 
 const Home = () => {
   return (
-    <div >
+    <div>
       <HeroSection />
       <RecentlyUploadedBooks />
       <TopRatedBooks />

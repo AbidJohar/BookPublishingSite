@@ -2,14 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import Title from './Title';
 import BookCard from './BookCard';
-import { books } from '../assets/assets';
+import { books } from '../assets/assets.js';
 
 const RecentlyUploadedBooks = () => {
   const [recentlyUploadedBooks, setRecentlyUploadedBooks] = useState([]);
 
   useEffect(() => {
-    const sortedBooks = [...books]
-      sortedBooks.slice(0, 6); 
+    const sortedBooks = [...books].slice(0,9);
+       
+      
     setRecentlyUploadedBooks(sortedBooks);
   }, []);
 

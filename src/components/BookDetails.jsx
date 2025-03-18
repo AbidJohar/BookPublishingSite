@@ -1,12 +1,18 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useEffect } from 'react';
+import { FaThumbsDown, FaThumbsUp } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const BookDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { book } = location.state || {};
+
+  // Scroll to top when component mounts or route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []); // Trigger on route change
 
   if (!book) {
     navigate("/");
@@ -38,11 +44,7 @@ const BookDetails = () => {
                   "Billionaire Arav Malhotra, never planning marriage, wedded the daughter of his father's business partner against his will."}
               </p>
             </div>
-            <div className="flex justify-center md:justify-start items-center mt-2">
-              <span className="mr-2 font-bold text-[#333333]">Rating:</span>
-              <span className="text-[#FFD700]">⭐</span>
-              <span className="ml-1 text-[#333333]">(3.1k)</span>
-            </div>
+            
             <div className="flex justify-center md:justify-start items-center mt-2">
               <span className="mr-2 font-bold text-[#333333]">Reading Time:</span>
               <span className="text-[#333333]">{book.readTime || '2 hours'}</span>
@@ -50,6 +52,16 @@ const BookDetails = () => {
             <div className="flex justify-center md:justify-start items-center mt-2">
               <span className="mr-2 font-bold text-[#333333]">Read Count:</span>
               <span className="text-[#333333]">{book.totalReaders || '1652'}</span>
+            </div>
+            <div className="flex justify-center md:justify-start items-center mt-2 gap-5">
+              <span className=' flex items-center gap-2 q'>
+                <FaThumbsUp/>
+                {0}
+              </span>
+              <span className='flex items-center gap-2 '>
+                <FaThumbsDown/>
+                {0}
+              </span>
             </div>
             <button className="mt-4 bg-teal-700 hover:bg-teal-800 text-white py-2 px-8 sm:py-3 sm:px-14 rounded font-extrabold transition duration-200">
               Read Now

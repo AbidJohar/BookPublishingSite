@@ -1,4 +1,4 @@
- @import url('https://fonts.googleapis.com/css2?family=Lobster&family=Outfit:wght@100..900&family=Poppins:wght@500;600&family=Prata&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Lobster&family=Outfit:wght@100..900&family=Pacifico&family=Poppins:wght@500;600&family=Prata&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -21,6 +21,20 @@
     font-family: "Prata", serif;
     font-weight: 700;
     font-style: normal;
+  }
+  
+  .pacifico-regular {
+    font-family: "Pacifico", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .dancing-script{
+    font-family: "Dancing Script", serif;
+    /* font-optical-sizing: auto; */
+    font-weight: 700;
+    font-style: normal;
+    font-size: 4rem;
   }
   
   .lobster-regular {

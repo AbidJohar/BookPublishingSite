@@ -9,7 +9,7 @@ const MostReadBooks = () => {
   const [mostReadBooks, setMostReadBooks] = useState([]);
 
   useEffect(() => {
-    const sortedBooks = [...books].sort((a, b) => (b.totalReaders || 0) - (a.totalReaders || 0));
+    const sortedBooks = [...books].sort((a, b) => (b.readByUsers || 0) - (a.readByUsers || 0));
     setMostReadBooks(sortedBooks.slice(0, 6));
   }, []);
 

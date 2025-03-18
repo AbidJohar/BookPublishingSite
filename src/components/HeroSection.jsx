@@ -40,8 +40,8 @@ const HeroSection = () => {
         ))}
       </Swiper>
       
-      <div className="absolute bottom-10 left-7 sm:left-16 text-white z-10">
-        <h1 className="text-3xl sm:text-4xl font-bold">Welcome to Our Book Publishing Platform</h1>
+      <div className="absolute bottom-32 sm:bottom-10 left-4 sm:left-16 text-white z-10">
+        <h1 className="text-2xl sm:text-4xl font-bold [text-shadow:_4px_4px_4px_rgba(0,0,0)]">Welcome to Our Book Publishing Platform</h1>
         <p className="text-base sm:text-lg">Discover, write, and publish your next masterpiece.</p>
       </div>
     </section>

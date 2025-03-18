@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import Title from '../components/Title';
+import { Link } from 'react-router-dom';
 
 const PublishingPage = () => {
   const [formData, setFormData] = useState({
@@ -178,13 +179,14 @@ const PublishingPage = () => {
             >
               Save Draft
             </button>
-            <button
+            <Link
+              to={'/writing-dashboard'}
               onClick={handlePublish}
               className="px-8 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
               disabled={!formData.termsAccepted}
             >
-              Publish Now
-            </button>
+              next
+            </Link>
           </div>
         </div>
 

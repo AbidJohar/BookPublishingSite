@@ -207,7 +207,7 @@ export const books = [
     "title": "Galactic Voyages",
     "author": "Stella Nova",
     "description": "Journey through the stars and beyond known galaxies.",
-    "category": "sci-fi",
+    "category": "Fantasy",
     "coverImage": image5,
     "episodes": [
       {
@@ -227,7 +227,7 @@ export const books = [
     "title": "Galactic Voyages",
     "author": "Stella Nova",
     "description": "Journey through the stars and beyond known galaxies.",
-    "category": "sci-fi",
+    "category": "Fantacy",
     "coverImage": image10,
     "episodes": [
       {
