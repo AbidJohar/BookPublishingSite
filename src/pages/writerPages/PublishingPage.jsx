@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import Title from '../components/Title';
-import { Link } from 'react-router-dom';
+import Title from '../../components/Title';
+import { Link, useNavigate } from 'react-router-dom';
 
 const PublishingPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -11,6 +12,8 @@ const PublishingPage = () => {
     coverImage: null,
     termsAccepted: false
   });
+  
+  const [errors, setErrors] = useState({});
 
   const categories = [
     // Fiction Categories
@@ -18,33 +21,48 @@ const PublishingPage = () => {
     'Historical Fiction', 'Adventure', 'Action', 'Dystopian', 'Paranormal',
     'Magical Realism', 'Crime Fiction', 'Gothic Fiction', 'Psychological Thriller',
     'Urban Fiction',
-  
     // Non-Fiction Categories
     'Biography', 'Memoir', 'Self-Help', 'Psychology', 'True Crime', 'Business & Finance',
     'Science & Technology', 'Health & Wellness', 'Philosophy', 'Religion & Spirituality',
     'History', 'Travel', 'Cooking', 'Parenting', 'Art & Photography', 'Politics',
-  
     // Children & Young Adult
     'Picture Books', 'Middle Grade Fiction', 'Young Adult', 'Fairy Tales & Folklore',
-  
     // Poetry & Drama
     'Classic Poetry', 'Contemporary Poetry', 'Plays & Drama'
   ];
 
+  const validateForm = () => {
+    let tempErrors = {};
+    if (!formData.title.trim()) tempErrors.title = 'Title is required';
+    if (!formData.description.trim()) tempErrors.description = 'Description is required';
+    if (!formData.category) tempErrors.category = 'Category is required';
+    if (!formData.coverImage) tempErrors.coverImage = 'Cover image is required';
+    if (!formData.termsAccepted) tempErrors.termsAccepted = 'You must accept the terms and conditions';
+    
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       setFormData(prev => ({ ...prev, coverImage: URL.createObjectURL(file) }));
+      setErrors(prev => ({ ...prev, coverImage: '' }));
     }
   };
 
   const handleTermsChange = (e) => {
     setFormData(prev => ({ ...prev, termsAccepted: e.target.checked }));
+    setErrors(prev => ({ ...prev, termsAccepted: '' }));
   };
 
   const handleSave = () => {
@@ -52,29 +70,27 @@ const PublishingPage = () => {
     // Add your save logic here
   };
 
-  const handlePublish = () => {
-    if (!formData.termsAccepted) {
-      alert('Please accept the terms and conditions before publishing');
-      return;
+  const handlePublish = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      console.log('Publishing:', formData);
+      navigate('/writing-dashboard');
     }
-    console.log('Publishing:', formData);
-    // Add your publish logic here
   };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-6 py-12 min-h-screen bg-gray-50">
       <div className="flex flex-col items-start ml-4 mb-5">
-         <Title text1={"PUBLISH_YOUR"} text2={"MASTERPIECE"}/>
+        <Title text1={"PUBLISH_YOUR"} text2={"MASTERPIECE"}/>
         <p className="text-lg text-gray-600">Share your story with the world in just a few steps</p>
       </div>
 
-
-    <div className="bg-white  rounded-xl p-4 flex flex-col md:flex-row gap-8">
-       {/* left Column - Cover Image */}
-       <div className="w-full h-full md:w-1/3">
+      <form onSubmit={handlePublish} className="bg-white rounded-xl p-4 flex flex-col md:flex-row gap-8">
+        {/* Left Column - Cover Image */}
+        <div className="w-full h-full md:w-1/3">
           <div className="">
             <label className="block text-gray-800 text-base font-semibold mb-3">
-              Cover Image
+              Cover Image <span className="text-red-500">*</span>
             </label>
             <div className="relative group">
               <label className="w-full flex flex-col items-center px-6 py-12 bg-gray-50 text-gray-600 rounded-lg border-2 border-dashed border-teal-300 cursor-pointer transition-all duration-300 hover:border-teal-500 hover:bg-blue-50">
@@ -85,7 +101,7 @@ const PublishingPage = () => {
                     className="w-full h-96 object-cover rounded-md shadow-md"
                   />
                 ) : (
-                  <div className="text-center ">
+                  <div className="text-center">
                     <svg className="mx-auto h-[21rem] w-16 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                     </svg>
@@ -98,18 +114,20 @@ const PublishingPage = () => {
                   className="hidden" 
                   accept="image/*" 
                   onChange={handleImageUpload}
+                  required
                 />
               </label>
+              {errors.coverImage && <p className="text-red-500 text-sm mt-2">{errors.coverImage}</p>}
             </div>
           </div>
         </div>
 
-         {/* right Column - Form Fields */}
-         <div className="w-full md:w-2/3">
+        {/* Right Column - Form Fields */}
+        <div className="w-full md:w-2/3">
           {/* Title */}
           <div className="mb-6">
             <label className="block text-gray-800 text-base font-semibold mb-3">
-              Title
+              Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -118,13 +136,15 @@ const PublishingPage = () => {
               onChange={handleInputChange}
               className="w-full px-4 py-3 border border-teal-500 rounded-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm text-gray-900 placeholder-gray-400"
               placeholder="Enter a captivating title"
+              required
             />
+            {errors.title && <p className="text-red-500 text-sm mt-2">{errors.title}</p>}
           </div>
 
           {/* Description */}
           <div className="mb-6">
             <label className="block text-gray-800 text-base font-semibold mb-3">
-              Description
+              Description <span className="text-red-500">*</span>
             </label>
             <textarea
               name="description"
@@ -132,25 +152,29 @@ const PublishingPage = () => {
               onChange={handleInputChange}
               className="w-full px-4 py-3 border border-teal-500 rounded-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm text-gray-900 placeholder-gray-400 h-40"
               placeholder="Write a compelling description..."
+              required
             />
+            {errors.description && <p className="text-red-500 text-sm mt-2">{errors.description}</p>}
           </div>
 
           {/* Category */}
           <div className="mb-6">
             <label className="block text-gray-800 text-base font-semibold mb-3">
-              Category
+              Category <span className="text-red-500">*</span>
             </label>
             <select
               name="category"
               value={formData.category}
               onChange={handleInputChange}
               className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm text-gray-900"
+              required
             >
               <option value="">Choose a category</option>
               {categories.map((cat) => (
                 <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
+            {errors.category && <p className="text-red-500 text-sm mt-2">{errors.category}</p>}
           </div>
 
           {/* Terms and Conditions */}
@@ -161,37 +185,37 @@ const PublishingPage = () => {
                 checked={formData.termsAccepted}
                 onChange={handleTermsChange}
                 className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                required
               />
               <span className="ml-3 text-gray-700 text-base">
                 I agree to the{' '}
                 <a href="#" className="text-blue-600 hover:underline font-medium">
                   Terms and Conditions
                 </a>
+                <span className="text-red-500"> *</span>
               </span>
             </label>
+            {errors.termsAccepted && <p className="text-red-500 text-sm mt-2">{errors.termsAccepted}</p>}
           </div>
 
           {/* Buttons */}
           <div className="flex justify-start gap-4">
             <button
+              type="button"
               onClick={handleSave}
               className="px-8 py-3 bg-gray-700 text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-300 shadow-md hover:shadow-lg"
             >
               Save Draft
             </button>
-            <Link
-              to={'/writing-dashboard'}
-              onClick={handlePublish}
+            <button
+              type="submit"
               className="px-8 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
-              disabled={!formData.termsAccepted}
             >
-              next
-            </Link>
+              Next
+            </button>
           </div>
         </div>
-
-       
-      </div>
+      </form>
     </div>
   );
 };

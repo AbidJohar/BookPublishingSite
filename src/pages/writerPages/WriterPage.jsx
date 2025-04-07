@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState} from 'react';
-import Title from '../components/Title';
+import Title from '../../components/Title';
 import { Link } from 'react-router-dom';
 
 const WriterPage = () => {

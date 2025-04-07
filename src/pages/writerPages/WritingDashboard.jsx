@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import Title from '../components/Title';
+import Title from '../../components/Title';
 import { Link } from 'react-router-dom';
 
 const WritingDashboard = () => {

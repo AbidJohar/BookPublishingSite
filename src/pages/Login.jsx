@@ -1,8 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext } from "react";
 import { assets } from "../assets/assets";
+import { UserContext } from "../context/userContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+     const {setIsAuth}  =  useContext(UserContext);
+     const navigate = useNavigate();
+
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,8 +22,12 @@ const Login = () => {
       return;
     }
     // Add your login/signup logic here
+    setIsAuth(true);
+    navigate('/profile')
     console.log({ email, password, ...(isSignup && { username, confirmPassword }) });
   };
+   
+
 
   return (
     <div className="flex items-start mt-7 justify-center min-h-screen bg-white">

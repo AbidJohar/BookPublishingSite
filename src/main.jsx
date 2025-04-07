@@ -4,17 +4,15 @@ import { BrowserRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
-// import ShopContextProvider from "./context/ShopContext.jsx";
-// import { GoogleOAuthProvider } from "@react-oauth/google";
-
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+import UserContextProvider from "./context/userContext.jsx";
+import BookContextProvider from "./context/bookContext.jsx";
 
 createRoot(document.getElementById("root")).render(
-  // <GoogleOAuthProvider clientId={clientId}>
   <BrowserRouter>
-    {/* <ShopContextProvider> */}
-      <App />
-    {/* </ShopContextProvider> */}
+    <UserContextProvider>
+      <BookContextProvider>
+        <App />
+      </BookContextProvider>
+    </UserContextProvider>
   </BrowserRouter>
-  // </GoogleOAuthProvider>
 );
