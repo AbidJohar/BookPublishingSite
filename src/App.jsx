@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Category from "./pages/Category";
 import WritePage from "./pages/writerPages/WriterPage";
@@ -13,21 +13,25 @@ import WritingDashboard from "./pages/writerPages/WritingDashboard";
 import PublishingPage from "./pages/writerPages/PublishingPage";
 import SearchResults from "./pages/SearchResults";
 import MyReadings from "./pages/MyReadings";
-import WriterSignInForm from "./pages/writerPages/WriterSignInForm";
+import WriterForm from "./pages/writerPages/WriterForm";
 import WriterDashboard from "./pages/writerPages/WriterDashboard";
 import ProtectedRoute from "./pages/ProtectedRoute";
+ 
 
 export default function App() {
+       const location =  useLocation()
+
+           const hideNavbar =  location.pathname === '/writer-dashboard'
   return (
     <>
       <div className="w-full">
-        <Navbar />
+        {!hideNavbar &&  <Navbar /> }
+       
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/book-details/:title" element={<BookDetails />} />
           <Route path="/category" element={<Category />} />
-          <Route path="/becomeawriter" element={<WritePage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/profile" element={ 
@@ -35,12 +39,13 @@ export default function App() {
               <Profile/>
             </ProtectedRoute>
           } />
+          <Route path="" element={<WritePage />} />
           <Route path="/writing-dashboard" element={<WritingDashboard />} />
           <Route path="/publishing-page" element={<PublishingPage />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/myreadings" element={<MyReadings />} />
-          <Route path="/writeSignForm" element={<WriterSignInForm />} />
-          <Route path="/writerDashboard" element={<WriterDashboard />} />
+          <Route path="/becomeawriter" element={<WriterForm />} />
+          <Route path="/writer-dashboard" element={<WriterDashboard />} />
         </Routes>
         <Footer/>
       </div>

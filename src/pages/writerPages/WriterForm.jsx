@@ -1,14 +1,16 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Title from '../../components/Title';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import {UserContext}  from '../../context/userContext'; // Adjust path to your context file
 
-const WriterSignInForm = () => {
-  // State to manage form data
+const WriterForm = () => {
+  const navigate = useNavigate();
+  const { setWriter } = useContext(UserContext); // Access setWriter from context
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    password: '',
     paymentAccountNumber: '',
     addressLine1: '',
     city: '',
@@ -16,7 +18,7 @@ const WriterSignInForm = () => {
     postalCode: '',
     country: '',
     bio: '',
-    termsAccepted: false
+    termsAccepted: false,
   });
 
   // Handle input changes
@@ -31,13 +33,24 @@ const WriterSignInForm = () => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    const writerData = {
+      id: `writer-${Date.now()}`, // Simple ID generation (use UUID in production)
+      ...formData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    console.log('Form submitted:', writerData);
+
+    // Update context with writer data
+    setWriter(writerData);
+
+    // Navigate to WriterDashboard
+    navigate('/writer-dashboard');
 
     // Reset form after submission
     setFormData({
       fullName: '',
       email: '',
-      password: '',
       paymentAccountNumber: '',
       addressLine1: '',
       city: '',
@@ -45,28 +58,19 @@ const WriterSignInForm = () => {
       postalCode: '',
       country: '',
       bio: '',
-      termsAccepted: false
+      termsAccepted: false,
     });
   };
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-gray-50 to-gray-100">
-      {/* Header Banner */}
-      <div className="w-full bg-teal-600 py-8 px-4 mb-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Join Our Writer Community</h1>
-          <p className="text-teal-100 text-lg">Share your stories with readers around the world</p>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 pb-16">
-        {/* Title */}
-        <div className="flex justify-center mb-8">
-          <Title text1={"Writer"} text2={"Registration"} className="text-center" />
-        </div>
-
+      <div className="max-w-4xl mx-auto px-4 pt-6 pb-16">
         {/* Form Card */}
         <div className="bg-white p-6 sm:p-10 rounded-xl shadow-xl border border-gray-200">
+          {/* Title */}
+          <div className="flex justify-center mb-8 pl-48">
+            <Title text1={"Writer"} text2={"Data-Form"} className="text-center" />
+          </div>
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Personal Information Section */}
             <div className="border-b border-gray-200 pb-6">
@@ -91,7 +95,7 @@ const WriterSignInForm = () => {
 
                 {/* Email */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Active-email</label>
                   <input
                     type="email"
                     name="email"
@@ -102,25 +106,9 @@ const WriterSignInForm = () => {
                   />
                 </div>
 
-                {/* Password */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    required
-                  />
-                  <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters with a number and special character</p>
-                </div>
-
                 {/* Bio */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Short Bio
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Short Bio</label>
                   <textarea
                     name="bio"
                     value={formData.bio}
@@ -165,9 +153,7 @@ const WriterSignInForm = () => {
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Address Line 1
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Address Line 1</label>
                   <input
                     type="text"
                     name="addressLine1"
@@ -205,9 +191,7 @@ const WriterSignInForm = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Postal/ZIP Code
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Postal/ZIP Code</label>
                     <input
                       type="text"
                       name="postalCode"
@@ -277,4 +261,4 @@ const WriterSignInForm = () => {
   );
 };
 
-export default WriterSignInForm;
+export default WriterForm;
