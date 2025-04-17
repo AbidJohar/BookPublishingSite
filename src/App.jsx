@@ -39,7 +39,7 @@ export default function App() {
               <Profile/>
             </ProtectedRoute>
           } />
-          <Route path="" element={<WritePage />} />
+          <Route path="/writer-books" element={<WritePage />} />
           <Route path="/writing-dashboard" element={<WritingDashboard />} />
           <Route path="/publishing-page" element={<PublishingPage />} />
           <Route path="/search" element={<SearchResults />} />
