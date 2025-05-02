@@ -39,12 +39,17 @@ export default function App() {
               <Profile/>
             </ProtectedRoute>
           } />
+          
           <Route path="/writer-books" element={<WritePage />} />
           <Route path="/writing-dashboard" element={<WritingDashboard />} />
           <Route path="/publishing-page" element={<PublishingPage />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/myreadings" element={<MyReadings />} />
-          <Route path="/becomeawriter" element={<WriterForm />} />
+          <Route path="/becomeawriter" element={
+            <ProtectedRoute>
+            <WriterForm />
+            </ProtectedRoute>
+            } />
           <Route path="/writer-dashboard" element={<WriterDashboard />} />
         </Routes>
         <Footer/>

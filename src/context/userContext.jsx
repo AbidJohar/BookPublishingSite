@@ -3,25 +3,19 @@ import { createContext, useState } from "react";
 
 export const UserContext = createContext(null);
 
-const UserContextProvider = ({ children }) => {  
-  const [isAuth, setIsAuth] = useState(false);
-  const [writer, setWriter] = useState(null); // Add writer state
+const UserContextProvider = ({ children }) => {
+  const [user, setUser] = useState(null); // Store user data (e.g., { id, fullName, email, role })
+  const [writer, setWriter] = useState(null); // Retain writer state
 
-  console.log("isAuth:", isAuth);
-  console.log("writer:", writer);
 
   const values = {
-    isAuth,
-    setIsAuth,
+    user,
+    setUser,
     writer,
-    setWriter, // Expose setWriter to update writer data
+    setWriter,
   };
 
-  return (
-    <UserContext.Provider value={values}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={values}>{children}</UserContext.Provider>;
 };
 
 export default UserContextProvider;
