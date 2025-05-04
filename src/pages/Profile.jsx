@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { assets } from '../assets/assets';
 import { UserContext } from '../context/userContext';
 import { useNavigate } from 'react-router-dom';
@@ -8,11 +8,13 @@ import axios from 'axios';
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
   const [activeStat, setActiveStat] = useState(null);
   const [showFollowing, setShowFollowing] = useState(false);
   const [showContents, setShowContents] = useState(false);
   const [showFollowers, setShowFollowers] = useState(false);
+  const [uploadError, setUploadError] = useState(''); 
 
   const stats = [
     { name: 'Contents', value: 4 },
@@ -37,6 +39,48 @@ const Profile = () => {
     }
   };
 
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type (optional)
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      setUploadError('Please upload a valid image (JPEG, PNG, or GIF)');
+      return;
+    }
+     
+    const formData = new FormData();
+    formData.append('profileImage', file); // 'file' matches multer's expected field name
+
+    try {
+      setUploadError('');
+      const base_url = import.meta.env.VITE_BASE_URL;
+      const response = await axios.put(
+        `${base_url}/v1/auth/update-profileImage`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setUser(response.data.user);  
+      } else {
+        setUploadError(response.data.message || 'Failed to upload image');
+      }
+    } catch (err) {
+      console.error('Image upload error:', err);
+      setUploadError(err.response?.data?.message || 'Error uploading image');
+    }
+  };
+
+
+
   const logout = async () => {
     try {
       const base_url = import.meta.env.VITE_BASE_URL;
@@ -53,28 +97,55 @@ const Profile = () => {
       navigate('/login');
     }
   };
+  const triggerFileInput = () => {
+    fileInputRef.current.click(); // Programmatically click the hidden file input
+  };
 
   return (
     <div className="w-full mx-auto bg-black shadow-md">
       {/* Upper Section: Background Image and Profile Icon */}
-      <div className="relative h-36 ">
-        <img 
-          src={assets.logo} 
-          alt="Books" 
-          className="w-full h-full object-cover" 
+      <div className="relative h-36">
+        <img
+          src={assets.logo}
+          alt="Books"
+          className="w-full h-full object-cover"
         />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-2 w-24 h-24 bg-teal-500 border-[3px] border-white rounded-full flex items-center justify-center text-white text-4xl font-bold">
-          {user?.fullName?.charAt(0)?.toUpperCase() || 'A'}
-          <div className='absolute bottom-2 -right-1 bg-black/40 flex items-center justify-center w-8 h-8 rounded-full border border-black'>
-            <button className="border-none text-sm cursor-pointer">📷</button>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-2 w-24 h-24 bg-teal-500 border-[3px] border-white rounded-full flex items-center justify-center text-white text-4xl font-bold overflow-hidden">
+          {user?.profileImage ? (
+            <img
+              src={user.profileImage}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            user?.fullName?.charAt(0)?.toUpperCase() || 'A'
+          )}
+          <div className="absolute bottom-2 -right-1 bg-black/40 flex items-center justify-center w-8 h-8 rounded-full border border-black">
+            <button
+              onClick={triggerFileInput}
+              className="border-none text-sm cursor-pointer"
+              title="Upload profile image"
+            >
+              📷
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              accept="image/jpeg,image/png,image/gif"
+              className="hidden"
+            />
           </div>
         </div>
         <div className="absolute top-2.5 right-2.5">
-          <button className="bg-transparent border-none text-2xl cursor-pointer">⚙️</button>
-          <button className="bg-transparent border-none text-2xl cursor-pointer ml-2.5">↗️</button>
+          <button className="bg-transparent border-none text-2xl cursor-pointer">
+            ⚙️
+          </button>
+          <button className="bg-transparent border-none text-2xl cursor-pointer ml-2.5">
+            ↗️
+          </button>
         </div>
       </div>
-
       {/* Lower Section: Name, About, Library Stats, and Suggestion */}
       <div className="p-5 bg-white">
         {/* Profile Info */}
