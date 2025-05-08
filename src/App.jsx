@@ -7,7 +7,7 @@ import Login from "./pages/Login";
 import Navbar from "./components/Header";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
-import Footer from './components/Footer'
+import Footer from "./components/Footer";
 import Profile from "./pages/Profile";
 import WritingDashboard from "./pages/writerPages/WritingDashboard";
 import PublishingPage from "./pages/writerPages/PublishingPage";
@@ -16,17 +16,17 @@ import MyReadings from "./pages/MyReadings";
 import WriterForm from "./pages/writerPages/WriterForm";
 import WriterDashboard from "./pages/writerPages/WriterDashboard";
 import ProtectedRoute from "./pages/ProtectedRoute";
- 
+import WriterProtectedRoute from "./pages/writerPages/WriterProtectedRoute";
 
 export default function App() {
-       const location =  useLocation()
+  const location = useLocation();
 
-           const hideNavbar =  location.pathname === '/writer-dashboard'
+  const hideNavbar = location.pathname === "/writer-dashboard";
   return (
     <>
       <div className="w-full">
-        {!hideNavbar &&  <Navbar /> }
-       
+        {!hideNavbar && <Navbar />}
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -34,25 +34,40 @@ export default function App() {
           <Route path="/category" element={<Category />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/profile" element={ 
-            <ProtectedRoute>
-              <Profile/>
-            </ProtectedRoute>
-          } />
-          
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/writer-books" element={<WritePage />} />
           <Route path="/writing-dashboard" element={<WritingDashboard />} />
           <Route path="/publishing-page" element={<PublishingPage />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/myreadings" element={<MyReadings />} />
-          <Route path="/becomeawriter" element={
-            <ProtectedRoute>
-            <WriterForm />
-            </ProtectedRoute>
-            } />
-          <Route path="/writer-dashboard" element={<WriterDashboard />} />
+          <Route
+            path="/becomeawriter"
+            element={
+              <ProtectedRoute>
+                <WriterProtectedRoute redirectTo="/becomeawriter">
+                  <WriterForm />
+                </WriterProtectedRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/writer-dashboard"
+            element={
+              <WriterProtectedRoute redirectTo="/writer-dashboard">
+                <WriterDashboard />
+              </WriterProtectedRoute>
+            }
+          />
         </Routes>
-        <Footer/>
+        <Footer />
       </div>
     </>
   );

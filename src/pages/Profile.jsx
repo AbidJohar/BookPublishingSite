@@ -6,56 +6,57 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Profile = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser,setWriter } = useContext(UserContext);
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  const [activeStat, setActiveStat] = useState(null);
-  const [showFollowing, setShowFollowing] = useState(false);
-  const [showContents, setShowContents] = useState(false);
-  const [showFollowers, setShowFollowers] = useState(false);
-  const [uploadError, setUploadError] = useState(''); 
+  // const [activeStat, setActiveStat] = useState(null);
+  const [uploadError, setUploadError] = useState('');
+  const [isUploading, setIsUploading] = useState(false); // New loading state
+  
+  // const [showFollowing, setShowFollowing] = useState(false);
+  // const [showContents, setShowContents] = useState(false);
+  // const [showFollowers, setShowFollowers] = useState(false);
+  // const stats = [
+  //   { name: 'Contents', value: 4 },
+  //   { name: 'Followers', value: 2 },
+  //   { name: 'Following', value: 2 },
+  // ];
 
-  const stats = [
-    { name: 'Contents', value: 4 },
-    { name: 'Followers', value: 2 },
-    { name: 'Following', value: 2 },
-  ];
-
-  const handleStatClick = (statName) => {
-    setActiveStat(statName);
-    if (statName === 'Following') {
-      setShowFollowing(!showFollowing);
-      setShowContents(false);
-      setShowFollowers(false);
-    } else if (statName === 'Contents') {
-      setShowContents(!showContents);
-      setShowFollowing(false);
-      setShowFollowers(false);
-    } else if (statName === 'Followers') {
-      setShowFollowers(!showFollowers);
-      setShowFollowing(false);
-      setShowContents(false);
-    }
-  };
-
+  // const handleStatClick = (statName) => {
+  //   setActiveStat(statName);
+  //   if (statName === 'Following') {
+  //     setShowFollowing(!showFollowing);
+  //     setShowContents(false);
+  //     setShowFollowers(false);
+  //   } else if (statName === 'Contents') {
+  //     setShowContents(!showContents);
+  //     setShowFollowing(false);
+  //     setShowFollowers(false);
+  //   } else if (statName === 'Followers') {
+  //     setShowFollowers(!showFollowers);
+  //     setShowFollowing(false);
+  //     setShowContents(false);
+  //   }
+  // };
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Validate file type (optional)
+    // Validate file type
     const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (!validTypes.includes(file.type)) {
       setUploadError('Please upload a valid image (JPEG, PNG, or GIF)');
       return;
     }
-     
+
     const formData = new FormData();
-    formData.append('profileImage', file); // 'file' matches multer's expected field name
+    formData.append('profileImage', file);
 
     try {
       setUploadError('');
+      setIsUploading(true); // Start loading
       const base_url = import.meta.env.VITE_BASE_URL;
       const response = await axios.put(
         `${base_url}/v1/auth/update-profileImage`,
@@ -69,17 +70,17 @@ const Profile = () => {
       );
 
       if (response.data.success) {
-        setUser(response.data.user);  
+        setUser(response.data.user);
       } else {
         setUploadError(response.data.message || 'Failed to upload image');
       }
     } catch (err) {
       console.error('Image upload error:', err);
       setUploadError(err.response?.data?.message || 'Error uploading image');
+    } finally {
+      setIsUploading(false); // Stop loading
     }
   };
-
-
 
   const logout = async () => {
     try {
@@ -92,13 +93,17 @@ const Profile = () => {
       setUser(null);
       navigate('/login');
     } catch (err) {
-      console.error("Logout error:", err);
+      console.error('Logout error:', err);
       setUser(null);
+      setWriter(null);
       navigate('/login');
     }
   };
+
   const triggerFileInput = () => {
-    fileInputRef.current.click(); // Programmatically click the hidden file input
+    if (!isUploading) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -123,8 +128,9 @@ const Profile = () => {
           <div className="absolute bottom-2 -right-1 bg-black/40 flex items-center justify-center w-8 h-8 rounded-full border border-black">
             <button
               onClick={triggerFileInput}
-              className="border-none text-sm cursor-pointer"
+              className={`border-none text-sm cursor-pointer ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
               title="Upload profile image"
+              disabled={isUploading}
             >
               📷
             </button>
@@ -136,6 +142,12 @@ const Profile = () => {
               className="hidden"
             />
           </div>
+          {/* Loading Spinner */}
+          {isUploading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-800/50 rounded-full">
+              <div className="w-8 h-8 border-4 border-t-4 border-white border-t-teal-500 rounded-full animate-spin"></div>
+            </div>
+          )}
         </div>
         <div className="absolute top-2.5 right-2.5">
           <button className="bg-transparent border-none text-2xl cursor-pointer">
@@ -152,12 +164,18 @@ const Profile = () => {
         <div className="text-center mt-5">
           <h1 className="text-2xl text-gray-800">{user?.fullName || 'Unknown User'}</h1>
           <p className="text-gray-600 text-sm">{user?.email || 'No email provided'}</p>
+          {uploadError && <p className="text-red-600 text-sm mt-2">{uploadError}</p>}
         </div>
-        <div className='w-full flex items-center justify-center py-4'>
-          <button onClick={logout} className='py-2 px-6 bg-red-600 hover:bg-red-700 text-white rounded-sm'>Signout</button>
+        <div className="w-full flex items-center justify-center py-4">
+          <button
+            onClick={logout}
+            className="py-2 px-6 bg-red-600 hover:bg-red-700 text-white rounded-sm"
+          >
+            Signout
+          </button>
         </div>
 
-        {/* Stats */}
+        {/* Stats 
         <div className="mt-5 text-sm">
           <p className="flex space-x-4">
             {stats.map((stat) => (
@@ -173,13 +191,14 @@ const Profile = () => {
             ))}
           </p>
         </div>
-
-        {/* Contents Section */}
+        */}
+     
+        {/* Contents Section 
         <div className={`mt-5 text-gray-600 text-sm ${showContents ? '' : 'hidden'}`}>
           <div className="w-full">
-            {/* Content Cards */}
+            {/* Content Cards 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {/* Content Card 1 */}
+              /* Content Card 1 
               <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="w-full h-32">
                   <img
@@ -203,7 +222,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* Content Card 2 */}
+              {/* Content Card 2 
               <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="w-full h-32">
                   <img
@@ -250,7 +269,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* Content Card 3 */}
+              {/* Content Card 3 
               <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="w-full h-32">
                   <img
@@ -273,49 +292,52 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
+              
             </div>
           </div>
-        </div>
+        </div> 
+        
 
-        {/* Followers Section */}
+        {/* Followers Section 
         <div className={`mt-5 text-gray-600 text-sm ${showFollowers ? '' : 'hidden'}`}>
-          <div className='w-full flex flex-row gap-4 items-start'>
+          <div className="w-full flex flex-row gap-4 items-start">
             <div className="flex flex-col items-center justify-center mt-2">
               <div className="w-24 h-24">
-                <img className='rounded-full' src={assets.contact_img} alt="follower_image" />
+                <img className="rounded-full" src={assets.contact_img} alt="follower_image" />
               </div>
-              <span className='font-semibold text-md my-2'>Jane Smith</span>
-              <button className='py-2 px-3 bg-red-600 text-white rounded-sm'>Block</button>
+              <span className="font-semibold text-md my-2">Jane Smith</span>
+              <button className="py-2 px-3 bg-red-600 text-white rounded-sm">Block</button>
             </div>
             <div className="flex flex-col items-center justify-center mt-2">
               <div className="w-24 h-24">
-                <img className='rounded-full' src={assets.contact_img} alt="follower_image" />
+                <img className="rounded-full" src={assets.contact_img} alt="follower_image" />
               </div>
-              <span className='font-semibold text-md my-2'>Mike Johnson</span>
-              <button className='py-2 px-3 bg-red-600 text-white rounded-sm'>Block</button>
+              <span className="font-semibold text-md my-2">Mike Johnson</span>
+              <button className="py-2 px-3 bg-red-600 text-white rounded-sm">Block</button>
             </div>
           </div>
         </div>
 
-        {/* Following Section */}
+        {/* Following Section 
         <div className={`mt-5 text-gray-600 text-sm ${showFollowing ? '' : 'hidden'}`}>
-          <div className='w-full flex flex-row gap-4 items-start'>
+          <div className="w-full flex flex-row gap-4 items-start">
             <div className="flex flex-col items-center justify-center mt-2">
               <div className="w-24 h-24">
-                <img className='rounded-full' src={assets.contact_img} alt="following_image" />
+                <img className="rounded-full" src={assets.contact_img} alt="following_image" />
               </div>
-              <span className='font-semibold text-md my-2'>John Doe</span>
-              <button className='py-2 px-3 bg-red-600 text-white rounded-sm'>UnFollow</button>
+              <span className="font-semibold text-md my-2">John Doe</span>
+              <button className="py-2 px-3 bg-red-600 text-white rounded-sm">UnFollow</button>
             </div>
             <div className="flex flex-col items-center justify-center mt-2">
               <div className="w-24 h-24">
-                <img className='rounded-full' src={assets.contact_img} alt="following_image" />
+                <img className="rounded-full" src={assets.contact_img} alt="following_image" />
               </div>
-              <span className='font-semibold text-md my-2'>Sarah Williams</span>
-              <button className='py-2 px-3 bg-red-600 text-white rounded-sm'>UnFollow</button>
+              <span className="font-semibold text-md my-2">Sarah Williams</span>
+              <button className="py-2 px-3 bg-red-600 text-white rounded-sm">UnFollow</button>
             </div>
           </div>
-        </div>
+        </div> 
+        */}
       </div>
     </div>
   );

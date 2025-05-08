@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Login = () => {
-  const { setUser } = useContext(UserContext);
+  const { setUser,setWriter } = useContext(UserContext);
   const navigate = useNavigate();
 
   const [isSignup, setIsSignup] = useState(false);
@@ -39,17 +39,22 @@ console.log("base_URL",base_url);
         ? { fullName: fullName, email: email, password }
         : { email: email, password };
 
-      const res = await axios.post(endpoint, payload, {
+      const response = await axios.post(endpoint, payload, {
         withCredentials: true
       });
-      console.log(res.data);
+      console.log(response.data);
 
-      if (res.data.success) {
-         
-        setUser(res.data.user); // Set user from response (e.g., { id, fullName, email, role })
-        navigate("/profile");
+      if (response.data.success) {
+        const user = response.data.user;
+        console.log('Logged in user:', user);
+
+        // Store user and accessToken
+        localStorage.setItem('user', JSON.stringify(user));
+        setUser(user); // Triggers fetchWriterProfile in UserContext
+
+        navigate('/profile');  
       } else {
-        setError(res.data.message || "Something went wrong");
+        setError(response.data.message || "Something went wrong");
       }
     } catch (err) {
       

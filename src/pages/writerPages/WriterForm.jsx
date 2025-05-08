@@ -2,11 +2,13 @@
 import React, { useState, useContext } from 'react';
 import Title from '../../components/Title';
 import { Link, useNavigate } from 'react-router-dom';
-import {UserContext}  from '../../context/userContext'; // Adjust path to your context file
+import { UserContext } from '../../context/userContext';
+import axios from 'axios';
 
 const WriterForm = () => {
   const navigate = useNavigate();
-  const { setWriter } = useContext(UserContext); // Access setWriter from context
+  const { setWriter } = useContext(UserContext);
+  const base_url = import.meta.env.VITE_BASE_URL;
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -20,6 +22,9 @@ const WriterForm = () => {
     bio: '',
     termsAccepted: false,
   });
+  const [profileImage, setProfileImage] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -30,36 +35,60 @@ const WriterForm = () => {
     }));
   };
 
+  // Handle file input change
+  const handleFileChange = (e) => {
+    setProfileImage(e.target.files[0]);
+  };
+
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const writerData = {
-      id: `writer-${Date.now()}`, // Simple ID generation (use UUID in production)
-      ...formData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    console.log('Form submitted:', writerData);
+    setError(null);
+    setLoading(true);
 
-    // Update context with writer data
-    setWriter(writerData);
+    const data = new FormData();
+    data.append('fullName', formData.fullName);
+    data.append('email', formData.email);
+    data.append('paymentAccountNumber', formData.paymentAccountNumber);
+    data.append('addressLine', formData.addressLine1);
+    data.append('city', formData.city);
+    data.append('state', formData.state);
+    data.append('postalCode', formData.postalCode);
+    data.append('country', formData.country);
+    data.append('bio', formData.bio);
+    if (profileImage) {
+      data.append('writerProfileImage', profileImage);
+    }
 
-    // Navigate to WriterDashboard
-    navigate('/writer-dashboard');
+    try {
+      const response = await axios.post(`${base_url}/v1/books/become-writer`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true,
+      });
 
-    // Reset form after submission
-    setFormData({
-      fullName: '',
-      email: '',
-      paymentAccountNumber: '',
-      addressLine1: '',
-      city: '',
-      state: '',
-      postalCode: '',
-      country: '',
-      bio: '',
-      termsAccepted: false,
-    });
+      if (response.data.success) {
+        const writer = response.data.writer;
+        const accessToken = response.data.accessToken;
+        console.log('Writer data:', writer);
+        console.log('Access Token:', accessToken);
+
+        // Store writer and accessToken in localStorage
+        localStorage.setItem('writer', JSON.stringify(writer));
+        localStorage.setItem('writerAccessToken', accessToken);
+        setWriter(writer); // Update context
+
+        navigate('/writer-dashboard');
+      } else {
+        setError(response.data.message || 'Failed to register writer');
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Failed to register writer. Please try again.';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -71,6 +100,14 @@ const WriterForm = () => {
           <div className="flex justify-center mb-8 pl-48">
             <Title text1={"Writer"} text2={"Data-Form"} className="text-center" />
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Personal Information Section */}
             <div className="border-b border-gray-200 pb-6">
@@ -90,6 +127,7 @@ const WriterForm = () => {
                     onChange={handleChange}
                     className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     required
+                    disabled={loading}
                   />
                 </div>
 
@@ -103,6 +141,21 @@ const WriterForm = () => {
                     onChange={handleChange}
                     className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     required
+                    disabled={loading}
+                  />
+                </div>
+
+                {/* Profile Image */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
+                  <input
+                    type="file"
+                    name="writerProfileImage"
+                    onChange={handleFileChange}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    accept="image/*"
+                    required
+                    disabled={loading}
                   />
                 </div>
 
@@ -116,6 +169,7 @@ const WriterForm = () => {
                     className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     rows="4"
                     placeholder="Tell readers about yourself as a writer..."
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -139,6 +193,7 @@ const WriterForm = () => {
                   onChange={handleChange}
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   required
+                  disabled={loading}
                 />
                 <p className="mt-1 text-xs text-gray-500">This is where your earnings will be sent</p>
               </div>
@@ -161,6 +216,7 @@ const WriterForm = () => {
                     onChange={handleChange}
                     className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     required
+                    disabled={loading}
                   />
                 </div>
 
@@ -174,6 +230,7 @@ const WriterForm = () => {
                       onChange={handleChange}
                       className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div>
@@ -185,6 +242,7 @@ const WriterForm = () => {
                       onChange={handleChange}
                       className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -199,6 +257,7 @@ const WriterForm = () => {
                       onChange={handleChange}
                       className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div>
@@ -210,6 +269,7 @@ const WriterForm = () => {
                       onChange={handleChange}
                       className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -227,6 +287,7 @@ const WriterForm = () => {
                   onChange={handleChange}
                   className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="ml-3 text-sm">
@@ -241,9 +302,10 @@ const WriterForm = () => {
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
               <button
                 type="submit"
-                className="bg-teal-600 hover:bg-teal-700 text-white py-3 px-8 rounded-md font-semibold transition duration-200 shadow-md"
+                className={`bg-teal-600 hover:bg-teal-700 text-white py-3 px-8 rounded-md font-semibold transition duration-200 shadow-md ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={loading}
               >
-                Register as Writer
+                {loading ? 'Registering...' : 'Register as Writer'}
               </button>
               <Link to="/becomeawriter" className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-8 rounded-md font-semibold transition duration-200 text-center">
                 Cancel

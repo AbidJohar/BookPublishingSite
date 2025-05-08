@@ -1,39 +1,32 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/userContext';  
+import { UserContext } from '../../context/userContext';
 import { FaHome } from 'react-icons/fa';
 
 const WriterDashboard = () => {
   const navigate = useNavigate();
   const { writer } = useContext(UserContext); // Access writer from context
 
+  // Redirect if no writer data
   if (!writer) {
-    navigate('/becomeawriter'); // Redirect back if no writer data
+    navigate('/becomeawriter');
     return null;
   }
 
-  // Placeholder data (replace with real data from backend/context)
+  // Writer stats based on available data
   const writerStats = {
-    followers: 1250, // Example count
-    booksPublished: 3, // Example
-    totalReads: 45000, // Example
-    earnings: 1200.50, // Example in dollars
-    books: [
-      { id: 'book-001', title: 'The Endless Ocean', reads: 20000 },
-      { id: 'book-002', title: 'Shadows of Time', reads: 15000 },
-      { id: 'book-003', title: 'Whispers in the Dark', reads: 10000 },
-    ],
-    followersList: [ // Placeholder followers data
-      { id: 'user-001', name: 'Alice Smith' },
-      { id: 'user-002', name: 'Bob Johnson' },
-      { id: 'user-003', name: 'Clara Lee' },
-      // Add more as needed
-    ],
+    followers: 0, // Not available in writer data
+    booksPublished: writer.books.length, // 0 since books is []
+    totalReads: 0, // Not available
+    earnings: 0, // Not available
+    books: writer.books, // Empty array
+    followersList: [], // Not available
   };
 
+  // Profile picture logic
   const firstLetter = writer.fullName[0].toUpperCase();
-  const profilePic = writer.profilePic || `https://dummyimage.com/100x100/fff/000&text=${firstLetter}`;
+  const profilePic = writer.writerProfileImage || `https://dummyimage.com/100x100/fff/000&text=${firstLetter}`;
 
   return (
     <div className="min-h-screen w-full bg-gray-100">
@@ -47,8 +40,8 @@ const WriterDashboard = () => {
               className="flex items-center space-x-2 text-white transition duration-200 transform hover:scale-105"
               title="Back to Home"
             >
-              <FaHome className="w-6 h-6" /> {/* Using react-icons */}
-              <span className="text-xl font-semibold hidden md:inline">Home</span> {/* Optional text, hidden on mobile */}
+              <FaHome className="w-6 h-6" />
+              <span className="text-xl font-semibold hidden md:inline">Home</span>
             </button>
           </div>
 
@@ -103,7 +96,7 @@ const WriterDashboard = () => {
           {/* Earnings Card */}
           <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-700">Earnings</h3>
-            <p className="text-3xl font-bold text-teal-600 mt-2">${writerStats.earnings.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-teal-600 mt-2">Rs.{writerStats.earnings.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
           </div>
         </div>
 
@@ -122,7 +115,7 @@ const WriterDashboard = () => {
                   <h4 className="text-lg font-medium text-gray-800">{book.title}</h4>
                   <p className="text-gray-600">Reads: {book.reads.toLocaleString()}</p>
                   <button
-                    onClick={() => navigate(`/book-details/${book.id}`)} // Assuming a book details route
+                    onClick={() => navigate(`/book-details/${book.id}`)}
                     className="mt-2 text-teal-600 hover:underline"
                   >
                     View Details
@@ -132,26 +125,26 @@ const WriterDashboard = () => {
             </div>
           )}
           <button
-            onClick={() => navigate('/writer-books')} // Placeholder for adding a new book
+            onClick={() => navigate('/writer-books')}
             className="mt-4 bg-teal-600 hover:bg-teal-700 text-white py-2 px-4 rounded font-semibold"
           >
             Add New Book
           </button>
         </div>
 
-        {/* New Two-Column Section: Followers (Left) and Books Table (Right) */}
+        {/* Two-Column Section: Followers (Left) and Books Table (Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Side: Followers List */}
           <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Followers</h3>
             {writerStats.followersList.length === 0 ? (
-              <p className="text-gray-600">No follwers published yet.</p>
+              <p className="text-gray-600">No followers yet.</p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-teal-600 text-white">
-                      <th className="p-3 font-semibold">Names</th>
+                      <th className="p-3 font-semibold">Name</th>
                       <th className="p-3 font-semibold">Action</th>
                     </tr>
                   </thead>
@@ -167,7 +160,7 @@ const WriterDashboard = () => {
                             onClick={() => navigate(`/follower-details/${follower.id}`)}
                             className="text-red-600 hover:underline"
                           >
-                            remove
+                            Remove
                           </button>
                         </td>
                       </tr>
@@ -177,6 +170,7 @@ const WriterDashboard = () => {
               </div>
             )}
           </div>
+
           {/* Right Side: Books Table */}
           <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Books</h3>
