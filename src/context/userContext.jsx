@@ -19,7 +19,7 @@ const UserContextProvider = ({ children }) => {
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
           setUser(parsedUser);
-          console.log('Restored user from localStorage:', parsedUser);
+          // console.log('Restored user from localStorage:', parsedUser);
 
           // Fetch writer profile if user exists
           if (parsedUser.id) {
@@ -37,9 +37,9 @@ const UserContextProvider = ({ children }) => {
   }, []);
 
   // Fetch writer profile by userId
-  const fetchWriterProfile = async (userId) => {
+  const fetchWriterProfile = async () => {
     try {
-      console.log('Fetching writer profile for userId:', userId);
+      // console.log('Fetching writer profile for userId:', userId);
       const response = await axios.get(`${base_url}/v1/books/me-writer`, {
         withCredentials: true,
       });
@@ -48,7 +48,7 @@ const UserContextProvider = ({ children }) => {
         const writerData = response.data.writer;
         setWriter(writerData);
         localStorage.setItem('writer', JSON.stringify(writerData));
-        console.log('Writer profile restored:', writerData);
+        // console.log('Writer profile restored:', writerData);
       } else {
         setWriter(null);
         localStorage.removeItem('writer');
@@ -69,14 +69,13 @@ const UserContextProvider = ({ children }) => {
     if (user) {
       // Fetch writer profile on new login
       if (user.id) {
-        fetchWriterProfile(user.id);
+        fetchWriterProfile();
       }
     } else {
       // Clear writer on logout
       setWriter(null);
       localStorage.removeItem('writer');
       localStorage.removeItem('writerAccessToken');
-      console.log('Cleared writer on logout');
     }
   }, [user]);
 

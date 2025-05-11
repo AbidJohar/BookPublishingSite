@@ -9,6 +9,9 @@ const BookDetails = () => {
   const navigate = useNavigate();
   const { book } = location.state || {};
 
+  console.log("book data in detail :",book);
+  
+
   // Scroll to top when component mounts or route changes
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -45,13 +48,10 @@ const BookDetails = () => {
               </p>
             </div>
             
-            <div className="flex justify-center md:justify-start items-center mt-2">
-              <span className="mr-2 font-bold text-[#333333]">Reading Time:</span>
-              <span className="text-[#333333]">{book.readTime || '2 hours'}</span>
-            </div>
+         
             <div className="flex justify-center md:justify-start items-center mt-2">
               <span className="mr-2 font-bold text-[#333333]">Read Count:</span>
-              <span className="text-[#333333]">{book.totalReaders || '1652'}</span>
+              <span className="text-[#333333]">{book.readByUsers}</span>
             </div>
             <div className="flex justify-center md:justify-start items-center mt-2 gap-5">
               <span className=' flex items-center gap-2 q'>

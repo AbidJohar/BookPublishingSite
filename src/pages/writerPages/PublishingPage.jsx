@@ -1,91 +1,132 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import Title from '../../components/Title';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useContext } from "react";
+import Title from "../../components/Title";
+import { Link, useNavigate } from "react-router-dom";
+import { BookContext } from "../../context/bookContext";
 
 const PublishingPage = () => {
   const navigate = useNavigate();
+  const { setBookMeta } = useContext(BookContext);
+
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: '',
-    coverImage: null,
-    termsAccepted: false
+    title: "",
+    description: "",
+    category: "",
+    coverImage: null, // Store File object
+    coverImagePreview: null, // Store blob URL for preview
   });
-  
+
   const [errors, setErrors] = useState({});
 
   const categories = [
-    // Fiction Categories
-    'Horror', 'Fantasy', 'Science Fiction', 'Mystery', 'Thriller', 'Romance',
-    'Historical Fiction', 'Adventure', 'Action', 'Dystopian', 'Paranormal',
-    'Magical Realism', 'Crime Fiction', 'Gothic Fiction', 'Psychological Thriller',
-    'Urban Fiction',
-    // Non-Fiction Categories
-    'Biography', 'Memoir', 'Self-Help', 'Psychology', 'True Crime', 'Business & Finance',
-    'Science & Technology', 'Health & Wellness', 'Philosophy', 'Religion & Spirituality',
-    'History', 'Travel', 'Cooking', 'Parenting', 'Art & Photography', 'Politics',
-    // Children & Young Adult
-    'Picture Books', 'Middle Grade Fiction', 'Young Adult', 'Fairy Tales & Folklore',
-    // Poetry & Drama
-    'Classic Poetry', 'Contemporary Poetry', 'Plays & Drama'
+    "Horror",
+    "Fantasy",
+    "Science Fiction",
+    "Mystery",
+    "Thriller",
+    "Romance",
+    "Historical Fiction",
+    "Adventure",
+    "Action",
+    "Dystopian",
+    "Paranormal",
+    "Magical Realism",
+    "Crime Fiction",
+    "Gothic Fiction",
+    "Psychological Thriller",
+    "Urban Fiction",
+    "Biography",
+    "Memoir",
+    "Self-Help",
+    "Psychology",
+    "True Crime",
+    "Business & Finance",
+    "Science & Technology",
+    "Health & Wellness",
+    "Philosophy",
+    "Religion & Spirituality",
+    "History",
+    "Travel",
+    "Cooking",
+    "Parenting",
+    "Art & Photography",
+    "Politics",
+    "Picture Books",
+    "Middle Grade Fiction",
+    "Young Adult",
+    "Fairy Tales & Folklore",
+    "Classic Poetry",
+    "Contemporary Poetry",
+    "Plays & Drama",
   ];
 
   const validateForm = () => {
     let tempErrors = {};
-    if (!formData.title.trim()) tempErrors.title = 'Title is required';
-    if (!formData.description.trim()) tempErrors.description = 'Description is required';
-    if (!formData.category) tempErrors.category = 'Category is required';
-    if (!formData.coverImage) tempErrors.coverImage = 'Cover image is required';
-    if (!formData.termsAccepted) tempErrors.termsAccepted = 'You must accept the terms and conditions';
-    
+    if (!formData.title.trim()) tempErrors.title = "Title is required";
+    if (!formData.description.trim())
+      tempErrors.description = "Description is required";
+    if (!formData.category) tempErrors.category = "Category is required";
+    if (!formData.coverImage) tempErrors.coverImage = "Cover image is required";
+
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({ ...prev, coverImage: URL.createObjectURL(file) }));
-      setErrors(prev => ({ ...prev, coverImage: '' }));
+      setFormData((prev) => ({
+        ...prev,
+        coverImage: file, // Store File object
+        coverImagePreview: URL.createObjectURL(file), // Store preview URL
+      }));
+      setErrors((prev) => ({ ...prev, coverImage: "" }));
     }
   };
 
   const handleTermsChange = (e) => {
-    setFormData(prev => ({ ...prev, termsAccepted: e.target.checked }));
-    setErrors(prev => ({ ...prev, termsAccepted: '' }));
+    setFormData((prev) => ({ ...prev, termsAccepted: e.target.checked }));
+    setErrors((prev) => ({ ...prev, termsAccepted: "" }));
   };
 
-  const handleSave = () => {
-    console.log('Saving draft:', formData);
-    // Add your save logic here
-  };
 
   const handlePublish = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log('Publishing:', formData);
-      navigate('/writing-dashboard');
+      console.log("Publishing:", formData);
+      setBookMeta({
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        coverImage: formData.coverImage, // Store File object
+        termsAccepted: formData.termsAccepted,
+        content: "",
+      });
+      navigate("/writing-dashboard");
     }
   };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-6 py-12 min-h-screen bg-gray-50">
       <div className="flex flex-col items-start ml-4 mb-5">
-        <Title text1={"PUBLISH_YOUR"} text2={"MASTERPIECE"}/>
-        <p className="text-lg text-gray-600">Share your story with the world in just a few steps</p>
+        <Title text1={"PUBLISH_YOUR"} text2={"MASTERPIECE"} />
+        <p className="text-lg text-gray-600">
+          Share your story with the world in just a few steps
+        </p>
       </div>
 
-      <form onSubmit={handlePublish} className="bg-white rounded-xl p-4 flex flex-col md:flex-row gap-8">
+      <form
+        onSubmit={handlePublish}
+        className="bg-white rounded-xl p-4 flex flex-col md:flex-row gap-8"
+      >
         {/* Left Column - Cover Image */}
         <div className="w-full h-full md:w-1/3">
           <div className="">
@@ -94,30 +135,46 @@ const PublishingPage = () => {
             </label>
             <div className="relative group">
               <label className="w-full flex flex-col items-center px-6 py-12 bg-gray-50 text-gray-600 rounded-lg border-2 border-dashed border-teal-300 cursor-pointer transition-all duration-300 hover:border-teal-500 hover:bg-blue-50">
-                {formData.coverImage ? (
-                  <img 
-                    src={formData.coverImage} 
-                    alt="Cover preview" 
+                {formData.coverImagePreview ? (
+                  <img
+                    src={formData.coverImagePreview}
+                    alt="Cover preview"
                     className="w-full h-96 object-cover rounded-md shadow-md"
                   />
                 ) : (
                   <div className="text-center">
-                    <svg className="mx-auto h-[21rem] w-16 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    <svg
+                      className="mx-auto h-[21rem] w-16 text-teal-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                      />
                     </svg>
-                    <span className="mt-3 block text-lg font-medium">Drop or click to upload cover image</span>
-                    <span className="mt-1 block text-sm text-gray-500">Supports JPG, PNG (Max 5MB)</span>
+                    <span className="mt-3 block text-lg font-medium">
+                      Drop or click to upload cover image
+                    </span>
+                    <span className="mt-1 block text-sm text-gray-500">
+                      Supports JPG, PNG (Max 5MB)
+                    </span>
                   </div>
                 )}
-                <input 
-                  type="file" 
-                  className="hidden" 
-                  accept="image/*" 
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
                   onChange={handleImageUpload}
                   required
                 />
               </label>
-              {errors.coverImage && <p className="text-red-500 text-sm mt-2">{errors.coverImage}</p>}
+              {errors.coverImage && (
+                <p className="text-red-500 text-sm mt-2">{errors.coverImage}</p>
+              )}
             </div>
           </div>
         </div>
@@ -138,7 +195,9 @@ const PublishingPage = () => {
               placeholder="Enter a captivating title"
               required
             />
-            {errors.title && <p className="text-red-500 text-sm mt-2">{errors.title}</p>}
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-2">{errors.title}</p>
+            )}
           </div>
 
           {/* Description */}
@@ -154,7 +213,9 @@ const PublishingPage = () => {
               placeholder="Write a compelling description..."
               required
             />
-            {errors.description && <p className="text-red-500 text-sm mt-2">{errors.description}</p>}
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-2">{errors.description}</p>
+            )}
           </div>
 
           {/* Category */}
@@ -171,10 +232,14 @@ const PublishingPage = () => {
             >
               <option value="">Choose a category</option>
               {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
-            {errors.category && <p className="text-red-500 text-sm mt-2">{errors.category}</p>}
+            {errors.category && (
+              <p className="text-red-500 text-sm mt-2">{errors.category}</p>
+            )}
           </div>
 
           {/* Terms and Conditions */}
@@ -182,31 +247,24 @@ const PublishingPage = () => {
             <label className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
-                checked={formData.termsAccepted}
-                onChange={handleTermsChange}
                 className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
                 required
               />
               <span className="ml-3 text-gray-700 text-base">
-                I agree to the{' '}
-                <a href="#" className="text-blue-600 hover:underline font-medium">
+                I agree to the{" "}
+                <a
+                  href="#"
+                  className="text-blue-600 hover:underline font-medium"
+                >
                   Terms and Conditions
                 </a>
                 <span className="text-red-500"> *</span>
               </span>
             </label>
-            {errors.termsAccepted && <p className="text-red-500 text-sm mt-2">{errors.termsAccepted}</p>}
           </div>
 
           {/* Buttons */}
           <div className="flex justify-start gap-4">
-            <button
-              type="button"
-              onClick={handleSave}
-              className="px-8 py-3 bg-gray-700 text-white rounded-lg font-medium hover:bg-gray-800 transition-all duration-300 shadow-md hover:shadow-lg"
-            >
-              Save Draft
-            </button>
             <button
               type="submit"
               className="px-8 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"

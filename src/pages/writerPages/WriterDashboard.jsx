@@ -16,12 +16,12 @@ const WriterDashboard = () => {
 
   // Writer stats based on available data
   const writerStats = {
-    followers: 0, // Not available in writer data
-    booksPublished: writer.books.length, // 0 since books is []
-    totalReads: 0, // Not available
-    earnings: 0, // Not available
-    books: writer.books, // Empty array
-    followersList: [], // Not available
+    followers: 0,  
+    booksPublished: writer.books.length,  
+    totalReads: 0, 
+    earnings: 0,  
+    books: writer.books, 
+    followersList: [],  
   };
 
   // Profile picture logic

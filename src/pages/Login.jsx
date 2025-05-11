@@ -18,7 +18,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const base_url = import.meta.env.VITE_BASE_URL;
  
-console.log("base_URL",base_url);
+// console.log("base_URL",base_url);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,7 +46,7 @@ console.log("base_URL",base_url);
 
       if (response.data.success) {
         const user = response.data.user;
-        console.log('Logged in user:', user);
+        // console.log('Logged in user:', user);
 
         // Store user and accessToken
         localStorage.setItem('user', JSON.stringify(user));
@@ -58,7 +58,7 @@ console.log("base_URL",base_url);
       }
     } catch (err) {
       
-      const errorMessage = err.response?.data?.message || "Authentication failed. Please try again.";
+      const errorMessage = err.response?.data?.message || "Network Error. Please try again.";
       setError(
      errorMessage
       );

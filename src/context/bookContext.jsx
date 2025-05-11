@@ -1,13 +1,23 @@
 /* eslint-disable react/prop-types */
-import { createContext } from "react";
+import { createContext, useState } from "react";
 
 export const BookContext = createContext(null);
 
 const BookContextProvider = ({ children }) => {
+const [bookMeta, setBookMeta] = useState({
+    title: "",
+    description: "",
+    category: "",
+    coverImage: null,
+    content: ""
+  });
 
-
+  console.log("book meta:", bookMeta);
+  
+  
   const values = {
-
+         bookMeta,
+         setBookMeta
   };
 
   return (

@@ -71,8 +71,7 @@ const WriterForm = () => {
       if (response.data.success) {
         const writer = response.data.writer;
         const accessToken = response.data.accessToken;
-        console.log('Writer data:', writer);
-        console.log('Access Token:', accessToken);
+        // console.log('Writer data:', writer);
 
         // Store writer and accessToken in localStorage
         localStorage.setItem('writer', JSON.stringify(writer));
