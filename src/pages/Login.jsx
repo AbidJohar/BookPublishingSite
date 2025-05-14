@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { assets } from "../assets/assets";
 import { UserContext } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
@@ -58,7 +58,7 @@ const Login = () => {
       }
     } catch (err) {
       
-      const errorMessage = err.response?.data?.message || "Network Error. Please try again.";
+      const errorMessage = err.response?.data?.message || "Authentication error. Please try again.";
       setError(
      errorMessage
       );
@@ -116,7 +116,13 @@ const Login = () => {
           {isSignup ? "Already have an account?" : "Don't have an account?"}
           <span
             className="text-[#008080] cursor-pointer hover:text-[#006666] font-medium"
-            onClick={() => setIsSignup(!isSignup)}
+            onClick={() => {
+              setIsSignup(!isSignup);
+              setError("");
+
+            }
+            }
+            
           >
             {isSignup ? " Login" : " Sign Up"}
           </span>

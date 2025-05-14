@@ -24,8 +24,8 @@ const HorrorSection = () => {
           const books = response.data.books || response.data;
           // Filter books by horror category and take the first 6
           const horrorBooks = books
-            .filter((book) => book.category.toLowerCase() === "horror")
-            .slice(0, 6);
+            .filter((book) => book.status === "approved" && book.category.toLowerCase() === "horror")
+
           setHorrorBooks(horrorBooks);
         } else {
           setError(response.data.message || "Failed to fetch horror books");

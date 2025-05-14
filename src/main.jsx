@@ -8,7 +8,7 @@ import UserContextProvider from "./context/userContext.jsx";
 import BookContextProvider from "./context/bookContext.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
+  <BrowserRouter future={{ v7_startTransition: true }}>
     <UserContextProvider>
       <BookContextProvider>
         <App />

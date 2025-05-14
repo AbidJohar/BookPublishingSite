@@ -17,6 +17,7 @@ import WriterForm from "./pages/writerPages/WriterForm";
 import WriterDashboard from "./pages/writerPages/WriterDashboard";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import WriterProtectedRoute from "./pages/writerPages/WriterProtectedRoute";
+import WriterContentPage from "./pages/writerPages/writerContentPage";
 
 export default function App() {
   const location = useLocation();
@@ -30,7 +31,6 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/book-details/:title" element={<BookDetails />} />
           <Route path="/category" element={<Category />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
@@ -43,11 +43,14 @@ export default function App() {
             }
           />
 
+           <Route path="/book-details/:title" element={<BookDetails />} />
           <Route path="/writer-books" element={<WritePage />} />
           <Route path="/writing-dashboard" element={<WritingDashboard />} />
           <Route path="/publishing-page" element={<PublishingPage />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/myreadings" element={<MyReadings />} />
+          <Route path="/books/content/:id" element={<WriterContentPage />} />
+            
           <Route
             path="/becomeawriter"
             element={

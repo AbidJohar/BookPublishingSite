@@ -25,13 +25,12 @@ const TopRatedBooks = () => {
         if (response.data.success) {
           const books = response.data.books || response.data;
           const validBooks = books
-            .filter((book) => book && book._id && book.title) // Keep your filter
+            .filter((book) => (book.status === "approved") && book && book._id && book.title) // Keep your filter
             .sort((a, b) => {
               const aRating = a.ratings && a.ratings.length > 0 ? a.ratings[0].rating : 0;
               const bRating = b.ratings && b.ratings.length > 0 ? b.ratings[0].rating : 0;
               return bRating - aRating; // Highest rating first
             })
-            .slice(0, 8);
 
           console.log("Valid Books after filtering/sorting:", validBooks); // Debug: Log final books
 

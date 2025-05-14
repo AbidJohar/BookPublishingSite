@@ -8,7 +8,7 @@ import HorrorSection from "../components/HorrorSection";
 
 const Home = () => {
   return (
-    <div>
+    <div className="bg-gray-100">
       <HeroSection />
       <RecentlyUploadedBooks />
       <TopRatedBooks />

@@ -23,9 +23,8 @@ const RecentlyUploadedBooks = () => {
         if (response.data.success) {
           const books = response.data.books || response.data;
           // Sort by createdAt (newest first) and take the first 9
-          const recentBooks = books
+          const recentBooks = books.filter((book) => book.status === "approved")
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 9);
           setRecentlyUploadedBooks(recentBooks);
         } else {
           setError(response.data.message || "Failed to fetch recently uploaded books");

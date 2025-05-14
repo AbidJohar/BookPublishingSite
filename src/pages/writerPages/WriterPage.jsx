@@ -27,7 +27,7 @@ const WriterPage = () => {
             >
               <h3 className="text-lg font-semibold text-gray-800">{draft.title}</h3>
               <p className="text-gray-500 text-xs mt-2">Last Edited: {draft.lastEdited}</p>
-              <button className="mt-3 px-4 py-1 text-sm bg-red-600 hover:bg-red-700 text-white rounded-sm transition-colors">
+              <button className="mt-3 px-4 py-1 text-sm bg-teal-600 hover:bg-teal-700 text-white rounded-sm transition-colors">
                 Continue Writing
               </button>
             </div>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Title from "./Title";
 import BookCard from "./BookCard";
+import { books } from "../assets/assets";
 
 const MostReadBooks = () => {
   const [mostReadBooks, setMostReadBooks] = useState([]);
@@ -22,17 +23,19 @@ const MostReadBooks = () => {
 
         if (response.data.success) {
           const books = response.data.books || response.data;
+
+          // 
            
           // Validate, normalize, and sort by readByUsers (highest first), take first 6
           const validBooks = books
-            .filter((book) => book && book._id && book.title) // Ensure required fields
+            .filter((book) => (book.status === "approved") && book &&  book._id && book.title) // Ensure required fields
             .map((book) => ({
               ...book,
-              ratings: book.ratings || [], // Ensure ratings is an array
               readByUsers: book.readByUsers || 0, // Ensure readByUsers is a number
             }))
             .sort((a, b) => (b.readByUsers || 0) - (a.readByUsers || 0))
-            .slice(0, 6);
+              console.log("fetchmostReahbooks:",validBooks);
+              
           setMostReadBooks(validBooks);
         } else {
           setError(response.data.message || "Failed to fetch most-read books");

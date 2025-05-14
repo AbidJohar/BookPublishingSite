@@ -91,6 +91,7 @@ const Profile = () => {
         { withCredentials: true }
       );
       setUser(null);
+      setWriter(null);
       navigate('/login');
     } catch (err) {
       console.error('Logout error:', err);

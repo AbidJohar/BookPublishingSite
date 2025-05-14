@@ -1,16 +1,18 @@
 /* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
+import { FaThumbsDown, FaThumbsUp } from "react-icons/fa";
 
 export default function BookCard({ book }) {
 
-    const { title, coverImage, ratings, readByUsers } = book;
+  console.log("book data in card:",book);
+  
 
- // Safely access rating
-  const rating = ratings && Array.isArray(ratings) && ratings.length > 0 ? ratings[0].rating : "N/A";
+    const { _id, title, coverImage, likes, dislikes, readByUsers } = book;
+
 
   return (
     <Link 
-      to={`/book-details/${title}`} 
+      to={`/book-details/${_id}`} 
       state={{ book }} 
       className="h-fit w-[10rem] flex-shrink-0 flex flex-col justify-between" 
     >
@@ -22,7 +24,12 @@ export default function BookCard({ book }) {
         />
       </div>
       <p className="text-sm font-semibold mt-2">{title}</p>
-      <p className="text-xs">Rating: {rating}</p>
+      <div className="flex items-center gap-4">
+
+      <p className="text-xs flex items-center gap-2"><FaThumbsUp/> {likes}</p>
+      <p className="text-xs flex items-center gap-2"><FaThumbsDown/> {dislikes}</p>
+
+      </div>
       <p className="text-xs">Total readers: {readByUsers}</p>
     </Link>
   );

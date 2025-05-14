@@ -100,12 +100,7 @@ const WriterForm = () => {
             <Title text1={"Writer"} text2={"Data-Form"} className="text-center" />
           </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-md">
-              {error}
-            </div>
-          )}
+        
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Personal Information Section */}
@@ -297,6 +292,14 @@ const WriterForm = () => {
               </div>
             </div>
 
+
+              {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
+
             {/* Submit Button */}
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
               <button
@@ -311,11 +314,6 @@ const WriterForm = () => {
               </Link>
             </div>
           </form>
-        </div>
-
-        {/* Additional Information */}
-        <div className="mt-8 text-center text-gray-600">
-          <p>Already registered? <Link to="/login" className="text-teal-600 hover:underline">Sign in here</Link></p>
         </div>
       </div>
     </div>
