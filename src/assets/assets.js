@@ -74,7 +74,7 @@ export const books = [
     "coverImage": image1,
     "episodes": [
       {
-        "title": "The Abyss Calls",
+        "title": "The Abyss Calls", 
         "content": "Discover the creatures lurking in the darkness."
       }
     ],

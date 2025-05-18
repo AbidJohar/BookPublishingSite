@@ -92,6 +92,7 @@ const Profile = () => {
       );
       setUser(null);
       setWriter(null);
+      localStorage.removeItem('writer');
       navigate('/login');
     } catch (err) {
       console.error('Logout error:', err);
