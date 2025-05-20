@@ -9,6 +9,7 @@ import axios from 'axios';
 
 const WritingDashboard = () => {
   const { bookMeta, setBookMeta } = useContext(BookContext);
+  const [loadingDraft, setLoadingDraft] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const base_url = import.meta.env.VITE_BASE_URL;
@@ -45,62 +46,29 @@ const WritingDashboard = () => {
     setBookMeta((prev) => ({ ...prev, content: value }));
   };
 
-  // const handleSave = async () => {
-  //   if (loading) return;
-
-  //   setError(null);
-  //   setLoading(true);
-
-  //   const data = new FormData();
-  //   data.append('title', bookMeta.title);
-  //   data.append('description', bookMeta.description);
-  //   data.append('category', bookMeta.category);
-  //   data.append('content', bookMeta.content);
-  //   if (bookMeta.coverImage) {
-  //     data.append('coverImage', bookMeta.coverImage);
-  //   }
-
-  //   try {
-  //     const response = await axios.post(`${base_url}/v1/books/save`, data, {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data',
-  //         Authorization: `Bearer ${localStorage.getItem('writerAccessToken')}`,
-  //       },
-  //       withCredentials: true,
-  //     });
-
-  //     if (response.data.success) {
-  //       console.log('Draft saved:', bookMeta);
-  //       alert('Draft saved successfully!');
-  //     } else {
-  //       setError(response.data.message || 'Failed to save draft');
-  //     }
-  //   } catch (err) {
-  //     const errorMessage =
-  //       err.response?.data?.message || 'Failed to save draft. Please try again.';
-  //     setError(errorMessage);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  const handlePublish = async () => {
-    if (loading) return;
+   const handleSave = async () => {
+    if (!bookMeta.title) {
+      setError('Title is required to save the draft.');
+      return;
+    }
 
     setError(null);
-    setLoading(true);
+    setLoadingDraft(true);
 
     const data = new FormData();
     data.append('title', bookMeta.title);
-    data.append('description', bookMeta.description);
-    data.append('category', bookMeta.category);
-    data.append('content', bookMeta.content);
-    if (bookMeta.coverImage) {
+    data.append('description', bookMeta.description || '');
+    data.append('category', bookMeta.category || '');
+    data.append('content', bookMeta.content || '');
+    if (bookMeta._id) {
+      data.append('bookId', bookMeta._id);
+    }
+    if (bookMeta.coverImage && bookMeta.coverImage instanceof File) {
       data.append('coverImage', bookMeta.coverImage);
     }
 
     try {
-      const response = await axios.post(`${base_url}/v1/books/create-book`, data, {
+      const response = await axios.post(`${base_url}/v1/books/draft-book`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('writerAccessToken')}`,
@@ -109,8 +77,63 @@ const WritingDashboard = () => {
       });
 
       if (response.data.success) {
+        console.log('Draft saved:', response.data.book);
+        setBookMeta((prev) => ({
+          ...prev,
+          _id: response.data.book._id,
+          title: response.data.book.title,
+          description: response.data.book.description || '',
+          category: response.data.book.category || '',
+          content: response.data.book.content || '',
+          coverImage: response.data.book.coverImage || prev.coverImage,
+          termsAccepted: prev.termsAccepted,
+        }));
+        alert('Draft saved successfully!');
+        navigate('/writer-dashboard');
+      } else {
+        setError(response.data.message || 'Failed to save draft');
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || 'Failed to save draft. Please try again.';
+      setError(errorMessage);
+    } finally {
+      setLoadingDraft(false);
+    }
+  };
+
+
+  const handlePublish = async () => {
+    if (loading) return;
+
+    setError(null);
+    setLoading(true);
+
+    const data = new FormData();
+     if (bookMeta._id) {
+      data.append('bookId', bookMeta._id);
+    }
+    data.append('title', bookMeta.title);
+    data.append('description', bookMeta.description);
+    data.append('category', bookMeta.category);
+    data.append('content', bookMeta.content);
+    if (!bookMeta._id && bookMeta.coverImage instanceof File) {
+      data.append('coverImage', bookMeta.coverImage);
+      console.log('Sending coverImage for new book:', bookMeta.coverImage);
+    }
+
+    try {
+      const response = await axios.post(`${base_url}/v1/books/create-book`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          // Authorization: `Bearer ${localStorage.getItem('writerAccessToken')}`,
+        },
+        withCredentials: true,
+      });
+
+      if (response.data.success) {
         console.log('Book published:', bookMeta);
-        alert('Book published successfully!');
+        alert('Book Submitted successfully!');
         // Reset bookMeta after successful publish
         setBookMeta({
           title: '',
@@ -156,13 +179,13 @@ const WritingDashboard = () => {
         />
         <div className="flex justify-end gap-4 p-4 mt-10">
           <button
-            // onClick={handleSave}
+            onClick={handleSave}
             className={`px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors ${
-              loading ? 'opacity-50 cursor-not-allowed' : ''
+              loadingDraft ? 'opacity-50 cursor-not-allowed' : ''
             }`}
-            disabled={loading}
+            disabled={loadingDraft}
           >
-            {loading ? 'Saving...' : 'Save'}
+            {loadingDraft ? 'Saving...' : 'Save as Draft'}
           </button>
           <button
             onClick={handlePublish}
@@ -171,7 +194,7 @@ const WritingDashboard = () => {
             }`}
             disabled={loading}
           >
-            {loading ? 'Publishing...' : 'Publish'}
+            {loading ? 'Submitting...' : 'Submit'}
           </button>
         </div>
       </div>

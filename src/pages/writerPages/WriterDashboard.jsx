@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/userContext';
 import { FaHome } from 'react-icons/fa';
 import axios from 'axios';
+import { ScaleLoader } from 'react-spinners';
 
 const base_url = import.meta.env.VITE_BASE_URL;
 
@@ -89,6 +90,14 @@ const WriterDashboard = () => {
 
   return (
     <div className="min-h-screen w-full bg-gray-100">
+
+      {/* Loading State */}
+      {loading && (
+        <div className="w-full h-screen flex justify-center items-center">
+          <ScaleLoader width={20} color="#013147" height={130} />
+        </div>
+      )}
+
       {/* Navbar */}
       <nav className="bg-teal-700 text-white p-4 shadow-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between">

@@ -1,72 +1,56 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext } from "react";
-import Title from "../../components/Title";
-import { Link, useNavigate } from "react-router-dom";
-import { BookContext } from "../../context/bookContext";
+import React, { useState, useEffect, useContext } from 'react';
+import Title from '../../components/Title';
+import { useNavigate } from 'react-router-dom';
+import { BookContext } from '../../context/bookContext';
 
 const PublishingPage = () => {
   const navigate = useNavigate();
-  const { setBookMeta } = useContext(BookContext);
+  const { bookMeta, setBookMeta } = useContext(BookContext);
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    category: "",
-    coverImage: null, // Store File object
-    coverImagePreview: null, // Store blob URL for preview
+    title: '',
+    description: '',
+    category: '',
+    coverImage: null, // Store File object for new uploads
+    coverImagePreview: null, // Store blob URL or backend URL for preview
+    termsAccepted: false,
   });
-
   const [errors, setErrors] = useState({});
 
   const categories = [
-    "Horror",
-    "Fantasy",
-    "Science Fiction",
-    "Mystery",
-    "Thriller",
-    "Romance",
-    "Historical Fiction",
-    "Adventure",
-    "Action",
-    "Dystopian",
-    "Paranormal",
-    "Magical Realism",
-    "Crime Fiction",
-    "Gothic Fiction",
-    "Psychological Thriller",
-    "Urban Fiction",
-    "Biography",
-    "Memoir",
-    "Self-Help",
-    "Psychology",
-    "True Crime",
-    "Business & Finance",
-    "Science & Technology",
-    "Health & Wellness",
-    "Philosophy",
-    "Religion & Spirituality",
-    "History",
-    "Travel",
-    "Cooking",
-    "Parenting",
-    "Art & Photography",
-    "Politics",
-    "Picture Books",
-    "Middle Grade Fiction",
-    "Young Adult",
-    "Fairy Tales & Folklore",
-    "Classic Poetry",
-    "Contemporary Poetry",
-    "Plays & Drama",
+    'Horror', 'Fantasy', 'Science Fiction', 'Mystery', 'Thriller', 'Romance',
+    'Historical Fiction', 'Adventure', 'Action', 'Dystopian', 'Paranormal',
+    'Magical Realism', 'Crime Fiction', 'Gothic Fiction', 'Psychological Thriller',
+    'Urban Fiction', 'Biography', 'Memoir', 'Self-Help', 'Psychology', 'True Crime',
+    'Business & Finance', 'Science & Technology', 'Health & Wellness', 'Philosophy',
+    'Religion & Spirituality', 'History', 'Travel', 'Cooking', 'Parenting',
+    'Art & Photography', 'Politics', 'Picture Books', 'Middle Grade Fiction',
+    'Young Adult', 'Fairy Tales & Folklore', 'Classic Poetry', 'Contemporary Poetry',
+    'Plays & Drama',
   ];
+
+  useEffect(() => {
+    // Sync formData with bookMeta
+    setFormData({
+      title: bookMeta.title || '',
+      description: bookMeta.description || '',
+      category: bookMeta.category || '',
+      coverImage: null, // Reset for new uploads
+      coverImagePreview: bookMeta.coverImage || null, // Use URL from bookMeta
+      termsAccepted: bookMeta.termsAccepted || false,
+    });
+  }, [bookMeta]);
 
   const validateForm = () => {
     let tempErrors = {};
-    if (!formData.title.trim()) tempErrors.title = "Title is required";
-    if (!formData.description.trim())
-      tempErrors.description = "Description is required";
-    if (!formData.category) tempErrors.category = "Category is required";
-    if (!formData.coverImage) tempErrors.coverImage = "Cover image is required";
+    if (!formData.title.trim()) tempErrors.title = 'Title is required';
+    if (!formData.description.trim()) tempErrors.description = 'Description is required';
+    if (!formData.category) tempErrors.category = 'Category is required';
+    if (!formData.coverImage && !formData.coverImagePreview) {
+      tempErrors.coverImage = 'Cover image is required';
+    }
+    if (!formData.termsAccepted) tempErrors.termsAccepted = 'You must agree to the terms';
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -76,7 +60,7 @@ const PublishingPage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -85,39 +69,39 @@ const PublishingPage = () => {
     if (file) {
       setFormData((prev) => ({
         ...prev,
-        coverImage: file, // Store File object
-        coverImagePreview: URL.createObjectURL(file), // Store preview URL
+        coverImage: file,
+        coverImagePreview: URL.createObjectURL(file),
       }));
-      setErrors((prev) => ({ ...prev, coverImage: "" }));
+      setErrors((prev) => ({ ...prev, coverImage: '' }));
     }
   };
 
   const handleTermsChange = (e) => {
     setFormData((prev) => ({ ...prev, termsAccepted: e.target.checked }));
-    setErrors((prev) => ({ ...prev, termsAccepted: "" }));
+    setErrors((prev) => ({ ...prev, termsAccepted: '' }));
   };
-
 
   const handlePublish = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Publishing:", formData);
+      console.log('Setting bookMeta:', formData);
       setBookMeta({
+        _id: bookMeta._id || '', // Preserve bookId for updates
         title: formData.title,
         description: formData.description,
         category: formData.category,
-        coverImage: formData.coverImage, // Store File object
+        coverImage: formData.coverImage || formData.coverImagePreview, // Use File or URL
         termsAccepted: formData.termsAccepted,
-        content: "",
+        content: bookMeta.content || '', // Preserve existing content
       });
-      navigate("/writing-dashboard");
+      navigate('/writing-dashboard');
     }
   };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-6 py-12 min-h-screen bg-gray-50">
       <div className="flex flex-col items-start ml-4 mb-5">
-        <Title text1={"PUBLISH_YOUR"} text2={"MASTERPIECE"} />
+        <Title text1="PUBLISH_YOUR" text2="MASTERPIECE" />
         <p className="text-lg text-gray-600">
           Share your story with the world in just a few steps
         </p>
@@ -129,7 +113,7 @@ const PublishingPage = () => {
       >
         {/* Left Column - Cover Image */}
         <div className="w-full h-full md:w-1/3">
-          <div className="">
+          <div>
             <label className="block text-gray-800 text-base font-semibold mb-3">
               Cover Image <span className="text-red-500">*</span>
             </label>
@@ -169,7 +153,6 @@ const PublishingPage = () => {
                   className="hidden"
                   accept="image/*"
                   onChange={handleImageUpload}
-                  required
                 />
               </label>
               {errors.coverImage && (
@@ -181,6 +164,9 @@ const PublishingPage = () => {
 
         {/* Right Column - Form Fields */}
         <div className="w-full md:w-2/3">
+          {errors.form && (
+            <p className="text-red-500 text-sm mb-4">{errors.form}</p>
+          )}
           {/* Title */}
           <div className="mb-6">
             <label className="block text-gray-800 text-base font-semibold mb-3">
@@ -193,7 +179,6 @@ const PublishingPage = () => {
               onChange={handleInputChange}
               className="w-full px-4 py-3 border border-teal-500 rounded-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm text-gray-900 placeholder-gray-400"
               placeholder="Enter a captivating title"
-              required
             />
             {errors.title && (
               <p className="text-red-500 text-sm mt-2">{errors.title}</p>
@@ -211,7 +196,6 @@ const PublishingPage = () => {
               onChange={handleInputChange}
               className="w-full px-4 py-3 border border-teal-500 rounded-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm text-gray-900 placeholder-gray-400 h-40"
               placeholder="Write a compelling description..."
-              required
             />
             {errors.description && (
               <p className="text-red-500 text-sm mt-2">{errors.description}</p>
@@ -228,7 +212,6 @@ const PublishingPage = () => {
               value={formData.category}
               onChange={handleInputChange}
               className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm text-gray-900"
-              required
             >
               <option value="">Choose a category</option>
               {categories.map((cat) => (
@@ -247,20 +230,21 @@ const PublishingPage = () => {
             <label className="flex items-center cursor-pointer">
               <input
                 type="checkbox"
+                checked={formData.termsAccepted}
+                onChange={handleTermsChange}
                 className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
-                required
               />
               <span className="ml-3 text-gray-700 text-base">
-                I agree to the{" "}
-                <a
-                  href="#"
-                  className="text-blue-600 hover:underline font-medium"
-                >
+                I agree to the{' '}
+                <a href="#" className="text-blue-600 hover:underline font-medium">
                   Terms and Conditions
-                </a>
-                <span className="text-red-500"> *</span>
+                </a>{' '}
+                <span className="text-red-500">*</span>
               </span>
             </label>
+            {errors.termsAccepted && (
+              <p className="text-red-500 text-sm mt-2">{errors.termsAccepted}</p>
+            )}
           </div>
 
           {/* Buttons */}
