@@ -4,9 +4,7 @@ import { FaThumbsDown, FaThumbsUp } from "react-icons/fa";
 
 export default function BookCard({ book }) {
 
-  console.log("book data in card:",book);
-  
-
+    
     const { _id, title, coverImage, likes, dislikes, readByUsers } = book;
 
 

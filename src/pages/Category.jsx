@@ -1,25 +1,67 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import { books } from '../assets/assets.js'; // Assuming this is where your books data is
+import React, { useEffect, useState } from 'react';
 import Title from '../components/Title.jsx';
 import BookCard from '../components/BookCard.jsx';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const ExploreCategories = () => {
   // Define categories with images (adjusted to match your book categories)
   const categories = [
     { src: "https://th.bing.com/th/id/OIP.e3Mo8cQZRzkEKhdvpZAaeAHaEK?pid=ImgDet&w=474&h=266&rs=1", title: "Horror" },
-    { src: "https://i.ytimg.com/vi/ozb_gKp-gUM/maxresdefault.jpg", title: "Fantasy" }, // Children's Stories could be Fantasy
-    { src: "https://th.bing.com/th/id/OIP.0ukxyOyM8a5ED1qiUa2rZwHaFi?rs=1&pid=ImgDetMain", title: "Adventure" }, // Comedy replaced with Adventure
-    { src: "https://th.bing.com/th/id/OIP.tE8qACZyjV4hQy4PD4YBygHaFb?rs=1&pid=ImgDetMain", title: "Historical" }, // Documentary replaced with Historical
-    { src: "https://th.bing.com/th/id/OIP.JXm9QYiqDU_T-DRgiD-FbQHaFj?rs=1&pid=ImgDetMain", title: "Sci-fi" }, // Life replaced with Sci-fi
-    { src: "https://th.bing.com/th/id/OIP.9mz2B2yGZkDqBOjfGKKu1AHaFE?rs=1&pid=ImgDetMain", title: "Mystery" }, // Islamic Stories replaced with Mystery
+    { src: "https://i.ytimg.com/vi/ozb_gKp-gUM/maxresdefault.jpg", title: "Fantasy" },  
+    { src: "https://th.bing.com/th/id/R.a218a3ca6bc5268281a0cde81d79a258?rik=akT5WlWIQVYIIw&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2fd%2fe%2f5%2f1222508-cool-adventure-wallpapers-1920x1303.jpg&ehk=2yEWdLUBXoVyjQkS5zQnh%2f1n%2bg0SBlbRi2rB4%2f0O3HU%3d&risl=&pid=ImgRaw&r=0", title: "Adventure" }, 
+    { src: "https://th.bing.com/th/id/OIP.tE8qACZyjV4hQy4PD4YBygHaFb?rs=1&pid=ImgDetMain", title: "Historical" }, 
+    { src: "https://th.bing.com/th/id/OIP.hTNDnAkEi-t4ZOvauN_1BgHaE5?cb=iwp2&rs=1&pid=ImgDetMain", title: "Thriller" },  
+    { src: "https://wp.onethreeonefour.com/wp-content/uploads/2018/01/Couple-Shoot-30.jpg", title: "Romance" },  
   ];
 
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [books, setBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const base_url = import.meta.env.VITE_BASE_URL;
+
+
+
+  useEffect(()=>{
+
+  const fetchData = async () =>{
+    
+    try {
+      setLoading(true);
+      setError(null);
+
+         const responce = await axios.get(`${base_url}/v1/books/getallbooks`, {
+          withCredentials: true
+         });
+
+         if(responce.data.success){
+              setBooks(responce.data.books);
+         }
+         else{
+          setError(responce.data.message);
+         }
+
+
+      
+    } catch (error) {
+        setError(error?.message || 'something went wrong in Explore Categories');
+    }
+     finally{
+      setLoading(false)
+     }
+
+
+  }
+
+
+fetchData();
+
+  },[base_url]);
 
 
    // handle search click
@@ -30,6 +72,8 @@ const ExploreCategories = () => {
       }
          
    }
+
+
 
   // Handle category click
   const handleCategoryClick = (categoryTitle) => {
