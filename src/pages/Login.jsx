@@ -5,6 +5,7 @@ import { assets } from "../assets/assets";
 import { UserContext } from "../context/userContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const { setUser,setWriter } = useContext(UserContext);
@@ -27,7 +28,7 @@ const Login = () => {
     setError("");
 
     if(isSignup && password !== confirmPassword){
-      return setError("Password do not match!")
+      return setError("Password does not match!")
     }
 
     try {
@@ -45,6 +46,8 @@ const Login = () => {
       console.log(response.data);
 
       if (response.data.success) {
+
+        toast.success(response.data.message);
         const user = response.data.user;
         // console.log('Logged in user:', user);
 
@@ -58,7 +61,8 @@ const Login = () => {
       }
     } catch (err) {
       
-      const errorMessage = err.response?.data?.message || "Authentication error. Please try again.";
+      toast.error(err?.message || "Authentication Error");
+      const errorMessage = err?.message || "Authentication error. Please try again.";
       setError(
      errorMessage
       );

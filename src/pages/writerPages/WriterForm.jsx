@@ -4,6 +4,7 @@ import Title from '../../components/Title';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/userContext';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const WriterForm = () => {
   const navigate = useNavigate();
@@ -69,6 +70,7 @@ const WriterForm = () => {
       });
 
       if (response.data.success) {
+        toast.success(response.data.message);
         const writer = response.data.writer;
         const accessToken = response.data.accessToken;
         // console.log('Writer data:', writer);
@@ -80,9 +82,11 @@ const WriterForm = () => {
 
         navigate('/writer-dashboard');
       } else {
+        toast.error(response.data.message);
         setError(response.data.message || 'Failed to register writer');
       }
     } catch (err) {
+      toast.error(err?.message || "something went wrong");
       const errorMessage = err.response?.data?.message || 'Failed to register writer. Please try again.';
       setError(errorMessage);
     } finally {
