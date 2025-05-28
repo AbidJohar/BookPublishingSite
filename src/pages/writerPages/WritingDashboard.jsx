@@ -6,6 +6,7 @@ import Title from '../../components/Title';
 import { useNavigate } from 'react-router-dom';
 import { BookContext } from '../../context/bookContext';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const WritingDashboard = () => {
   const { bookMeta, setBookMeta } = useContext(BookContext);
@@ -88,15 +89,17 @@ const WritingDashboard = () => {
           coverImage: response.data.book.coverImage || prev.coverImage,
           termsAccepted: prev.termsAccepted,
         }));
-        alert('Draft saved successfully!');
+        toast.success(response.data.message);
         navigate('/writer-dashboard');
       } else {
+        toast.error(response.data.message || "something went wrong!");
         setError(response.data.message || 'Failed to save draft');
       }
     } catch (err) {
       const errorMessage =
         err.response?.data?.message || 'Failed to save draft. Please try again.';
       setError(errorMessage);
+      toast.error(err?.message);
     } finally {
       setLoadingDraft(false);
     }
@@ -133,7 +136,7 @@ const WritingDashboard = () => {
 
       if (response.data.success) {
         console.log('Book published:', bookMeta);
-        alert('Book Submitted successfully!');
+         toast.success(response.data.message);
         // Reset bookMeta after successful publish
         setBookMeta({
           title: '',

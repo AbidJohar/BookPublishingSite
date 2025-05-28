@@ -18,6 +18,7 @@ import WriterDashboard from "./pages/writerPages/WriterDashboard";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import WriterProtectedRoute from "./pages/writerPages/WriterProtectedRoute";
 import WriterContentPage from "./pages/writerPages/writerContentPage";
+import { ToastContainer } from "react-toastify";
 
 export default function App() {
   const location = useLocation();
@@ -27,6 +28,8 @@ export default function App() {
     <>
       <div className="w-full">
         {!hideNavbar && <Navbar />}
+
+        <ToastContainer/>
 
         <Routes>
            
@@ -40,7 +43,6 @@ export default function App() {
           <Route path="/category" element={
             <ProtectedRoute>
               <Category />
-
             </ProtectedRoute>
             } />
           <Route path="/about" element={<About />} />
